@@ -28,6 +28,8 @@ const tableConfig={
     'age':'INT NOT NULL',
   }
 }
+
+
 var db:Sqlite;
 type Props = {};
 export default class App extends Component<Props> {

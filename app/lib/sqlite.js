@@ -10,9 +10,22 @@ sqlite.enablePromise(false);
 
 sqlite.DEBUG(true); // NOTE: Delete this before release
 
+type ActionName=String
+type ErrorMessage=Object
+type SuccessCallback=(action:ActionName)=>{}
+type FailedCallback=(action:ActionName,error:ErrorMessage)=>{}
+type DatabaseConfig={
+    name:String,
+    success:SuccessCallback,
+    failed:FailedCallback
+}
+type TableConfig={
+    name:String,
+    fields:{}
+}
 
 export default class Sqlite {
-    constructor(database_config) {
+    constructor(database_config:DatabaseConfig) {
         this.db;
         this.dbConfig = database_config;
         this._tableName = "";
@@ -96,7 +109,7 @@ export default class Sqlite {
     //     }).catch(err=>this.whenFailed('show',err))
     // }
 
-    async createTable(table_config) {
+    async createTable(table_config:TableConfig) {
         let fields = table_config.fields;
         
         let f=[];
