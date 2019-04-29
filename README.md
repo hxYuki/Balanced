@@ -18,3 +18,8 @@ Record how much you have saved or over-spent.
      Home page, Statistics page, Navigator...
 * ### Screen navigation
      The Navigator of pages and charts.
+* ### Components as modules
+     React Native sqlite storage... 
+* ### Networking with a REST API
+     Upload local data to server.
+     Download data from server.
