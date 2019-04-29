@@ -11,3 +11,10 @@ Record how much you have saved or over-spent.
 * ### Cloud Backup
      Easily transfer your achievement.
 
+## Details
+* ### Stateless components
+     Buttons, items in the List, and so on.
+* ### Stateful components
+     Home page, Statistics page, Navigator...
+* ### Screen navigation
+     The Navigator of pages and charts.
