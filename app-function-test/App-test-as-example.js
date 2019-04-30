@@ -87,10 +87,10 @@ export default class App extends Component<Props> {
     d.forEach(v=>{db.in(tableConfig.name).insert(v);});
   }
 
-  queryData(){
-    db.in(tableConfig.name).select((e)=>{
-      this.setState({dataList:e});
-    });  
+  async queryData(){
+    let data = await db.in(tableConfig.name).select();  
+
+    this.setState({dataList:data});
   }
 
   deleteData(){

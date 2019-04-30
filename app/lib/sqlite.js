@@ -6,7 +6,7 @@
 
 import sqlite from 'react-native-sqlite-storage'
 
-sqlite.enablePromise(false);
+sqlite.enablePromise(true);
 
 sqlite.DEBUG(true); // NOTE: Delete this before release
 
@@ -56,24 +56,33 @@ export default class Sqlite {
         this._tableWhere = [""];
     }
 
-    open() {
+    async open() {
         // let DB;
-        this.db = sqlite.openDatabase(this.dbConfig, () => {
-            this.whenSuccess('open');
-        }, (er) => {
-            this.whenFailed('open', err);
-        });
-        // this.db = sqlite.openDatabase(this.dbConfig).catch(err=>{this.whenFailed('open',err)});
+        // this.db = sqlite.openDatabase(this.dbConfig, () => {
+        //     this.whenSuccess('open');
+        // }, (er) => {
+        //     this.whenFailed('open', err);
+        // });
+        this.db = await sqlite.openDatabase(this.dbConfig).catch(err=>{this.whenFailed('open',err)});
         
     }
 
-    close() {
-        this.db.close(() => {
-            this.db = null;
-            this.whenSuccess("close");
-        },err => {
+    async close() {
+        await this.db;
+        try {
+            this.db.close().then(()=>{
+                this.db = null;
+                this.whenSuccess("close");
+            });
+        } catch (err) {
             this.whenFailed("close",err);
-        });
+        }
+        // this.db.close(() => {
+        //     this.db = null;
+        //     this.whenSuccess("close");
+        // },err => {
+        //     this.whenFailed("close",err);
+        // });
 
     }
 
@@ -119,28 +128,43 @@ export default class Sqlite {
 
         let sql = `CREATE TABLE IF NOT EXISTS ${table_config.name}(${f.join(',')});`;
         
-
-        this.db.executeSql(sql,[],() => {
-            this.whenSuccess("creation");
-            // this.in(table_config.name);
-        },err => {
+        await this.db;
+        try{
+            this.db.executeSql(sql).then(()=>{
+                this.whenSuccess("creation");
+            })
+        }catch(err){
             this.whenFailed("creation",err);
-        });
+        }
+        // this.db.executeSql(sql,[],() => {
+        //     this.whenSuccess("creation");
+        //     // this.in(table_config.name);
+        // },err => {
+        //     this.whenFailed("creation",err);
+        // });
         
         
     }
 
-    dropTable(table_name) {
+    async dropTable(table_name) {
         let sql = `DROP TABLE ${table_name}`;
-
-        this.db.executeSql(sql,[],() => {
-            this.whenSuccess("drop");
-        },err => {
-            this.whenFailed("drop",err);
-        });
+        
+        await this.db;
+        try {
+            this.db.executeSql(sql).then(()=>{
+                this.whenSuccess("drop");
+            });
+        } catch (err) {
+            this.whenFailed("drop",err);            
+        }
+        // this.db.executeSql(sql,[],() => {
+        //     this.whenSuccess("drop");
+        // },err => {
+        //     this.whenFailed("drop",err);
+        // });
     }
 
-    insert(inserted_data) {
+    async insert(inserted_data) {
         let fields = [];
         let values = [];
         // console.log(inserted_data);
@@ -150,34 +174,64 @@ export default class Sqlite {
         }
         let sql = `INSERT INTO ${this._tableName} (${fields.join(',')}) VALUES (${fields.map(v=>v&&'?').join(',')});`;
         this.afterQuery();
-        
-        this.db.executeSql(sql,values,(res) => {
-            this.whenSuccess("insert");
-            
-            return res.insertId;
-        },err => {
+
+        await this.db;
+        try {
+            let res = await this.db.executeSql(sql,values).then(res=>{
+                this.whenSuccess("insert");
+                return res[0].insertId;
+            }).catch(err=>{
+                this.whenFailed('insert',err);
+                return false;
+            });
+
+            return res;
+        } catch (err) {
             this.whenFailed("insert",err);
-        });
+            return false;
+        }
+        // this.db.executeSql(sql,values,(res) => {
+        //     this.whenSuccess("insert");
+            
+        //     return res.insertId;
+        // },err => {
+        //     this.whenFailed("insert",err);
+        // });
     }
 
-    select(receiver) {        
+    async select() {        
         if(!this._tableWhere.toString()) this._tableWhere=['1'];
         let sql=`SELECT ${this._tableField.join(',')} FROM ${this._tableName} WHERE ${this._tableWhere.join(' AND ')};`;
         this.afterQuery();
         
         // let ret;
+        await this.db;
+        try {
+            let result = await this.db.executeSql(sql).then(res=>{
+                this.whenSuccess("select");
+                // console.log('res:',);
+                return res[0].rows.raw();
+            }).catch(err=>{
+                this.whenFailed("select",err);
+                return false;
+            })
 
-        this.db.executeSql(sql,[],(res) => {
-            receiver(res.rows.raw());
-            this.whenSuccess("select");
-        },err => {
+            return result;
+        } catch (err) {
             this.whenFailed("select",err);
-        });
+            return false;
+        }
+        // this.db.executeSql(sql,[],(res) => {
+        //     receiver(res.rows.raw());
+        //     this.whenSuccess("select");
+        // },err => {
+        //     this.whenFailed("select",err);
+        // });
 
         // return ret;
     }
 
-    update(updated_data) {
+    async update(updated_data) {
         if(!this._tableWhere.toString()) {
             this.whenFailed("update","condition cannot be null");
             return false;
@@ -190,29 +244,60 @@ export default class Sqlite {
         let sql=`UPDATE ${this._tableName} SET ${fields.map((val)=>(val+'='+'?')).join(',')} WHERE ${this._tableWhere.join(' AND ')};`;
         this.afterQuery();
         
-        this.db.executeSql(sql,values,(res) => {
-            this.whenSuccess("update");
+        await this.db;
+        try {
+            let result = await this.db.executeSql(sql).then(res=>{
+                this.whenSuccess("update");
             
-            return res.rowsAffected;
-        },err => {
+                return res[0].rowsAffected;
+            }).catch(err=>{
+                this.whenFailed("update",err);
+                return false;
+            })
+
+            return result;
+        } catch (err) {
             this.whenFailed("update",err);
-        });
+            return false;
+        }
+        // this.db.executeSql(sql,values,(res) => {
+        //     this.whenSuccess("update");
+            
+        //     return res.rowsAffected;
+        // },err => {
+        //     this.whenFailed("update",err);
+        // });
     }
 
-    delete() {
+    async delete() {
         if(!this._tableWhere.toString()) {
             this.whenFailed("delete","condition cannot be null");
             return false;
         }
         let sql=`DELETE FROM ${this._tableName} WHERE ${this._tableWhere.join(' AND ')};`;
         this.afterQuery();
-        
-        this.db.executeSql(sql,[],(res) => {
-            this.whenSuccess("delete");
+        await this.db;
+        try {
+            let result = await this.db.executeSql(sql).then(res=>{
+                this.whenSuccess("delete");
             
-            return res.row;
-        },err => {
+                return res[0].rowsAffected;
+            }).catch(err=>{
+                this.whenFailed("delete",err);
+                return false;
+            })
+
+            return result;
+        } catch (err) {
             this.whenFailed("delete",err);
-        });
+            return false;
+        }
+        // this.db.executeSql(sql,[],(res) => {
+        //     this.whenSuccess("delete");
+            
+        //     return res.row;
+        // },err => {
+        //     this.whenFailed("delete",err);
+        // });
     }
 }
