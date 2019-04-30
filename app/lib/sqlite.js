@@ -7,7 +7,6 @@
 import sqlite from 'react-native-sqlite-storage'
 
 sqlite.enablePromise(true);
-
 sqlite.DEBUG(true); // NOTE: Delete this before release
 
 type ActionName=String
@@ -23,6 +22,10 @@ type TableConfig={
     name:String,
     fields:{}
 }
+// type SqliteClass={
+//     db:SqliteDatabase,
+
+// }
 
 export default class Sqlite {
     constructor(database_config:DatabaseConfig) {
