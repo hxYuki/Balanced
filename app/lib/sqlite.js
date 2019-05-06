@@ -53,23 +53,25 @@ export default class Sqlite {
         }
     }
 
+    /**
+     * Clear query conditions
+     */
     afterQuery(){
         this._tableName = "";
         this._tableField = ["*"];
         this._tableWhere = [""];
     }
 
+    /**
+     * Open database
+     */
     async open() {
-        // let DB;
-        // this.db = sqlite.openDatabase(this.dbConfig, () => {
-        //     this.whenSuccess('open');
-        // }, (er) => {
-        //     this.whenFailed('open', err);
-        // });
         this.db = await sqlite.openDatabase(this.dbConfig).catch(err=>{this.whenFailed('open',err)});
-        
     }
 
+    /**
+     * Close database
+     */
     async close() {
         await this.db;
         try {
@@ -80,13 +82,6 @@ export default class Sqlite {
         } catch (err) {
             this.whenFailed("close",err);
         }
-        // this.db.close(() => {
-        //     this.db = null;
-        //     this.whenSuccess("close");
-        // },err => {
-        //     this.whenFailed("close",err);
-        // });
-
     }
 
     /**
@@ -121,6 +116,10 @@ export default class Sqlite {
     //     }).catch(err=>this.whenFailed('show',err))
     // }
 
+    /**
+     * Create new table
+     * @param {TableConfig} table_config Configuration of table to create
+     */
     async createTable(table_config:TableConfig) {
         let fields = table_config.fields;
         
@@ -139,16 +138,12 @@ export default class Sqlite {
         }catch(err){
             this.whenFailed("creation",err);
         }
-        // this.db.executeSql(sql,[],() => {
-        //     this.whenSuccess("creation");
-        //     // this.in(table_config.name);
-        // },err => {
-        //     this.whenFailed("creation",err);
-        // });
-        
-        
     }
 
+    /**
+     * drop specific table
+     * @param {String} table_name name of table to drop
+     */
     async dropTable(table_name) {
         let sql = `DROP TABLE ${table_name}`;
         
@@ -160,13 +155,12 @@ export default class Sqlite {
         } catch (err) {
             this.whenFailed("drop",err);            
         }
-        // this.db.executeSql(sql,[],() => {
-        //     this.whenSuccess("drop");
-        // },err => {
-        //     this.whenFailed("drop",err);
-        // });
     }
-
+    /**
+     *  insert given data and return its ID or false (when failed)
+     * @param {Object} inserted_data single line of data
+     * @returns {Promise<false> | Promise<Number>} failed | inserted item's id
+     */
     async insert(inserted_data) {
         let fields = [];
         let values = [];
@@ -193,15 +187,12 @@ export default class Sqlite {
             this.whenFailed("insert",err);
             return false;
         }
-        // this.db.executeSql(sql,values,(res) => {
-        //     this.whenSuccess("insert");
-            
-        //     return res.insertId;
-        // },err => {
-        //     this.whenFailed("insert",err);
-        // });
     }
 
+    /**
+     * select data
+     * @returns {Promise<false> | Promise<DataArray>}
+     */
     async select() {        
         if(!this._tableWhere.toString()) this._tableWhere=['1'];
         let sql=`SELECT ${this._tableField.join(',')} FROM ${this._tableName} WHERE ${this._tableWhere.join(' AND ')};`;
@@ -224,16 +215,13 @@ export default class Sqlite {
             this.whenFailed("select",err);
             return false;
         }
-        // this.db.executeSql(sql,[],(res) => {
-        //     receiver(res.rows.raw());
-        //     this.whenSuccess("select");
-        // },err => {
-        //     this.whenFailed("select",err);
-        // });
-
-        // return ret;
     }
 
+    /**
+     *  update given data and return its ID or false (when failed)
+     * @param {Object} updated_data single line of data
+     * @returns {Promise<false> | Promise<Number>} failed | affected rows' count
+     */
     async update(updated_data) {
         if(!this._tableWhere.toString()) {
             this.whenFailed("update","condition cannot be null");
@@ -263,15 +251,12 @@ export default class Sqlite {
             this.whenFailed("update",err);
             return false;
         }
-        // this.db.executeSql(sql,values,(res) => {
-        //     this.whenSuccess("update");
-            
-        //     return res.rowsAffected;
-        // },err => {
-        //     this.whenFailed("update",err);
-        // });
     }
 
+    /**
+     * delete certain line
+     * @returns {Promise<false> | Promise<Number>} failed | affected rows' count
+     */
     async delete() {
         if(!this._tableWhere.toString()) {
             this.whenFailed("delete","condition cannot be null");
@@ -295,12 +280,5 @@ export default class Sqlite {
             this.whenFailed("delete",err);
             return false;
         }
-        // this.db.executeSql(sql,[],(res) => {
-        //     this.whenSuccess("delete");
-            
-        //     return res.row;
-        // },err => {
-        //     this.whenFailed("delete",err);
-        // });
     }
 }
