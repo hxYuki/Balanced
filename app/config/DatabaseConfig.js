@@ -12,11 +12,23 @@ const TableBasicAccounting = {
         'note': 'TEXT',
         'method': 'CHARACTER(6)', // AliPay, WeChat, Cash
         'usage': 'CHARACTER(13) NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense, 
-        'circleNum': 'INTEGER',
+        'tags': 'TEXT',
+        'circleCount': 'INTEGER',
         'circleUnit': 'CHARACTER(5)', // Month, Week, Day
         'firstTime': 'INTEGER NOT NULL',
         'nextTriggerTime': 'INTEGER',
     }
 }
 
-export {Database,TableBasicAccounting};
+const TableTags = {
+    name: 'TagTable',
+    fields:{
+        'id': 'INTEGER PRIMARY NOT NULL AUTOINCREAMENT',
+        'title': 'TEXT',
+    }
+}
+export {
+    Database,
+    TableBasicAccounting,
+    TableTags
+};
