@@ -83,12 +83,15 @@ export default class App extends Component<Props> {
   }
 
   insertData(){
-    let d=[{name:"Tom",age:18},{name:"Jack",age:19}];
-    d.forEach(v=>{db.in(tableConfig.name).insert(v);});
+    let d=[{name:"Tom",age:18},{name:"Jack",age:19},{name:"Richard",age:20},{name:"Link",age:21}];
+    // d.forEach(v=>{db.in(tableConfig.name).insert(v);});
+
+    db.in(tableConfig.name).insert(d);
   }
 
   async queryData(){
-    let data = await db.in(tableConfig.name).select();  
+    // let data = await db.in(tableConfig.name).where('age>19 and age <21').select();
+    let data = await db.in(tableConfig.name).orderedBy('age','name','desc').select();  
 
     this.setState({dataList:data});
   }
