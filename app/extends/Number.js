@@ -5,7 +5,7 @@
  * @param {Char} decimal symbol for decimal point
  * @returns {String} string in a currency formation
  */
-Number.prototype.formatCurrency = function ({place, symbol, thousand, decimal}) {
+Number.prototype.formatCurrency = function ({place, symbol, thousand, decimal} = {place:2,symbol:'$',thousand:',',decimal:'.'}) {
     place = !isNaN(place = Math.abs(place)) ? place : 2;
     symbol = symbol !== undefined ? symbol : "$";
     thousand = thousand || ",";
