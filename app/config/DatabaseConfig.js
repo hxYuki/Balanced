@@ -27,8 +27,17 @@ const TableTags = {
         'title': 'TEXT',
     }
 }
+
+const AppSettings = {
+    name: 'SettingsTable',
+    fields:{
+        'location': 'CHARACTER(15)',
+        'today': 'INTEGER'
+    }
+}
 export {
     Database,
     TableBasicAccounting,
-    TableTags
+    TableTags,
+    AppSettings
 };
