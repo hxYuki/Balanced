@@ -13,10 +13,7 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.1.0",
     "react-native-sqlite-storage": "^3.3.10",
-<<<<<<< HEAD
-=======
     "react-native-svg": "^9.4.0",
->>>>>>> 5dd2590f85f3231ae90f6bdb5eb2f245a1fda0a4
     "react-native-vector-icons": "^6.4.2"
   },
   "devDependencies": {
