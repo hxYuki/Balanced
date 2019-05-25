@@ -104,8 +104,7 @@ export default class App extends Component<Props> {
   render() {
     return (// TODO: Replace this with Drawer component
       <View>
-        <Main  />
-        <Floatwindow></Floatwindow>
+        <Main />
 
       </View>
     );
