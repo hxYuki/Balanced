@@ -4,15 +4,19 @@ import {Header, ListItem} from 'react-native-elements';
 
 import {ListHeader} from './Components';
 import ThemeConfig from '../../config/ThemeConfig';
-
 import sqlite from '../../lib/sqlite';
 import {Database} from '../../config/DatabaseConfig';
+// import { type } from 'os';
 
 var db = new sqlite(Database);
 
 const parseMonth=(n) => {return (new Date(n)).toLocaleString('en-Us', {month: 'long'});}
 
-export default class Main extends Component{
+type OpenDrawerCallback = ()=>{}
+type Props = {
+  openDrawer: OpenDrawerCallback
+}
+export default class Main extends Component<Props>{
   constructor(props){
     super(props);
     this.state={
