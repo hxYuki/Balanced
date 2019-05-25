@@ -35,8 +35,11 @@ const AppSettings = {
         'today': 'INTEGER'
     }
 }
+
+const DBVersion = '1.0.0';
 export {
     Database,
+    DBVersion,
     TableBasicAccounting,
     TableTags,
     AppSettings

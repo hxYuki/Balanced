@@ -61,10 +61,10 @@ export default class Main extends Component{
   
   render(){
     return (
-      <View style={{ flex: 1 }}>
-        <StatusBar translucent barStyle={'light-content'} />
+      <View>
+        <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
-          backgroundColor={ThemeConfig.themeColor}
+          backgroundColor={ThemeConfig.themeMainColor}
           containerStyle={{borderBottomWidth:0}}
           placement="left"
           leftComponent={{ icon: "menu", color: "#fff" }}
@@ -76,7 +76,7 @@ export default class Main extends Component{
           stickySectionHeadersEnabled
           renderSectionHeader={({section:{title}})=><Text style={MainStyle.SectionHeaderStyle}>{title}</Text>}
           ListHeaderComponent={<ListHeader income={this.state.income} expense={this.state.expense} deposit={this.state.deposit} />}
-          renderItem={({item})=>(<ListItem containerStyle={MainStyle.ListItemStyle} topDivider bottomDivider leftIcon={{name:'ali-pay',reverse:true}} title={'Usage'} subtitle={'note'} rightTitle={'amount'} rightSubtitle={'date'} />)}
+          renderItem={({item})=>(<ListItem containerStyle={MainStyle.ListItemStyle} topDivider bottomDivider leftIcon={{name:'flight-takeoff',color:ThemeConfig.themeStrongColor,reverse:true}} title={'Usage'} subtitle={'note'} rightTitle={'amount'} rightSubtitle={'date'} />)}
           keyExtractor={(item,index)=>index.toString()}
         />
       </View>
@@ -86,7 +86,7 @@ export default class Main extends Component{
 
 const MainStyle = StyleSheet.create({
   SectionHeaderStyle:{
-    backgroundColor:'#fff',
+    backgroundColor:ThemeConfig.themeWeakColor,
     // borderTopColor:'#f2f2f2',
     borderColor:'rgb(200,200,200)',
     borderTopWidth:0.3636,
