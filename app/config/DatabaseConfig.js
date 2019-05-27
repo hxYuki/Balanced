@@ -1,5 +1,5 @@
-const Database = {
-    name:'Balanced',
+const DatabaseConfig = {
+    name:'Balanced'
     // success:()=>{},
     // failed:()=>{}
 }
@@ -7,14 +7,14 @@ const Database = {
 const TableBasicAccounting = {
     name: 'BaseTable',
     fields: {
-        'id': 'INTEGER PRIMARY NOT NULL AUTOINCREAMENT',
+        'id': 'INTEGER PRIMARY KEY NOT NULL AUTOINCREAMENT',
         'amount': 'DECIMAL NOT NULL',
         'note': 'TEXT',
-        'method': 'CHARACTER(6)', // AliPay, WeChat, Cash
-        'usage': 'CHARACTER(13) NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense 
+        'method': 'INTEGER NOT NULL', // AliPay, WeChat, Cash
+        'usage': 'INTEGER NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense 
         'tags': 'TEXT',
         'cycleCount': 'INTEGER',
-        'cycleUnit': 'CHARACTER(5)', // Month, Week, Day
+        'cycleUnit': 'INTEGER', // Month, Week, Day
         'firstTime': 'INTEGER NOT NULL',
         'nextTriggerTime': 'INTEGER',
     }
@@ -43,7 +43,7 @@ const AppSettings = {
 
 const DBVersion = '1.0.0';
 export {
-    Database,
+    DatabaseConfig,
     DBVersion,
     TableBasicAccounting,
     BaseTableFieldTitle,
