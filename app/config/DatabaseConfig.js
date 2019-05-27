@@ -11,13 +11,18 @@ const TableBasicAccounting = {
         'amount': 'DECIMAL NOT NULL',
         'note': 'TEXT',
         'method': 'CHARACTER(6)', // AliPay, WeChat, Cash
-        'usage': 'CHARACTER(13) NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense, 
+        'usage': 'CHARACTER(13) NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense 
         'tags': 'TEXT',
-        'circleCount': 'INTEGER',
-        'circleUnit': 'CHARACTER(5)', // Month, Week, Day
+        'cycleCount': 'INTEGER',
+        'cycleUnit': 'CHARACTER(5)', // Month, Week, Day
         'firstTime': 'INTEGER NOT NULL',
         'nextTriggerTime': 'INTEGER',
     }
+}
+const BaseTableFieldTitle = {
+    method:['AliPay','WeChat','Cash'],
+    usage:['Entertainment','Catering','Education','Loan','Clothing','Daily Expense'],
+    cycleUnit:['Year','Month','Week','Day']
 }
 
 const TableTags = {
@@ -41,6 +46,7 @@ export {
     Database,
     DBVersion,
     TableBasicAccounting,
+    BaseTableFieldTitle,
     TableTags,
     AppSettings
 };
