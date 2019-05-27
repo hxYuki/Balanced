@@ -26,7 +26,7 @@ export default class Drawer extends Component{
         <Text style={{fontSize:20}}>Restore</Text>
       </View>
     </View>
-  )};
+  )}
 
   openDrawer() {
     this.refs.drawerLayout.openDrawer();
