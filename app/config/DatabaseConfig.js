@@ -1,5 +1,5 @@
 const Database = {
-    name:'Balanced',
+    name:'Balanced'
     // success:()=>{},
     // failed:()=>{}
 }
@@ -10,11 +10,11 @@ const TableBasicAccounting = {
         'id': 'INTEGER PRIMARY NOT NULL AUTOINCREAMENT',
         'amount': 'DECIMAL NOT NULL',
         'note': 'TEXT',
-        'method': 'CHARACTER(6)', // AliPay, WeChat, Cash
-        'usage': 'CHARACTER(13) NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense 
+        'method': 'INTEGER NOT NULL', // AliPay, WeChat, Cash
+        'usage': 'INTEGER NOT NULL', // Entertainment, Catering, Education, Loan, Clothing, Daily Expense 
         'tags': 'TEXT',
         'cycleCount': 'INTEGER',
-        'cycleUnit': 'CHARACTER(5)', // Month, Week, Day
+        'cycleUnit': 'INTEGER', // Month, Week, Day
         'firstTime': 'INTEGER NOT NULL',
         'nextTriggerTime': 'INTEGER',
     }
