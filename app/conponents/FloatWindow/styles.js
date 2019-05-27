@@ -35,10 +35,10 @@ const styles = StyleSheet.create({
     },
     text: {
         color: 'black',
-        width: 100,
+        width: 80,
         marginTop: 15,
         height: 40,
-        fontSize: 25,
+        fontSize: 20,
     },
     input: {
         fontSize: 25,
