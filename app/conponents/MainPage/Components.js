@@ -5,7 +5,7 @@ import ThemeConfig from '../../config/ThemeConfig';
 
 const ListHeader = ({income, expense, deposit}) => (
   <View style={ListHeaderStyle.Container}>
-    <Text h2 style={ListHeaderStyle.ListTextCommon}>This week: {(income - expense).formatCurrency({symbol:'￥'})}</Text>
+    <Text h4 style={ListHeaderStyle.ListTextCommon}>This week: {(income - expense).formatCurrency({symbol:'￥'})}</Text>
     <View style={ListHeaderStyle.ListTextContainer}>
       <Text style={ListHeaderStyle.ListTextCommon}>Income: {income.formatCurrency({symbol:'￥'})}</Text>
       <Text style={ListHeaderStyle.ListTextCommon}>Expense: {expense.formatCurrency({symbol:'￥'})}</Text>
@@ -15,7 +15,7 @@ const ListHeader = ({income, expense, deposit}) => (
 );
 const ListHeaderStyle = StyleSheet.create({
   Container:{
-    backgroundColor:ThemeConfig.themeColor,
+    backgroundColor:ThemeConfig.themeMainColor,
     paddingBottom:10,
     paddingLeft:10,
     paddingRight:10,
@@ -29,7 +29,8 @@ const ListHeaderStyle = StyleSheet.create({
   },
   ListTextCommon:{
     color:ThemeConfig.themeTextColor,
-    fontSize:17
+    fontSize:15,
+    flex:1
   }
 })
 

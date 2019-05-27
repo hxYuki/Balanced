@@ -2,17 +2,23 @@ import React, {Component} from 'react';
 import {View, Text, SectionList, StatusBar, StyleSheet} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 
+
 import {ListHeader} from './Components';
 import ThemeConfig from '../../config/ThemeConfig';
-
 import sqlite from '../../lib/sqlite';
 import {Database} from '../../config/DatabaseConfig';
+import Floatwindow from '../FloatWindow/FloatWindow';
+
 
 var db = new sqlite(Database);
 
 const parseMonth=(n) => {return (new Date(n)).toLocaleString('en-Us', {month: 'long'});}
 
-export default class Main extends Component{
+type OpenDrawerCallback = ()=>{}
+type Props = {
+  openDrawer: OpenDrawerCallback
+}
+export default class Main extends Component<Props>{
   constructor(props){
     super(props);
     this.state={
@@ -61,13 +67,13 @@ export default class Main extends Component{
   
   render(){
     return (
-      <View style={{ flex: 1 }}>
-        <StatusBar translucent barStyle={'light-content'} />
+      <View>
+        <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
-          backgroundColor={ThemeConfig.themeColor}
+          backgroundColor={ThemeConfig.themeMainColor}
           containerStyle={{borderBottomWidth:0}}
           placement="left"
-          leftComponent={{ icon: "menu", color: "#fff" }}
+          leftComponent={{ icon: "menu", color: "#fff" , onPress:this.props.openDrawer()}}
           centerComponent={{ text: "Balanced", style: { color: "#fff" } }}
           // statusBarProps={{ translucent: true, barStyle: "light-content" }}
         />
@@ -76,9 +82,11 @@ export default class Main extends Component{
           stickySectionHeadersEnabled
           renderSectionHeader={({section:{title}})=><Text style={MainStyle.SectionHeaderStyle}>{title}</Text>}
           ListHeaderComponent={<ListHeader income={this.state.income} expense={this.state.expense} deposit={this.state.deposit} />}
-          renderItem={({item})=>(<ListItem containerStyle={MainStyle.ListItemStyle} topDivider bottomDivider leftIcon={{name:'ali-pay',reverse:true}} title={'Usage'} subtitle={'note'} rightTitle={'amount'} rightSubtitle={'date'} />)}
+          renderItem={({item})=>(<ListItem containerStyle={MainStyle.ListItemStyle} topDivider bottomDivider leftIcon={{name:'flight-takeoff',color:ThemeConfig.themeStrongColor,reverse:true}} title={'Usage'} subtitle={'note'} rightTitle={'amount'} rightSubtitle={'date'} />)}
           keyExtractor={(item,index)=>index.toString()}
         />
+
+        <Floatwindow />
       </View>
     );
   }
@@ -86,7 +94,7 @@ export default class Main extends Component{
 
 const MainStyle = StyleSheet.create({
   SectionHeaderStyle:{
-    backgroundColor:'#fff',
+    backgroundColor:ThemeConfig.themeWeakColor,
     // borderTopColor:'#f2f2f2',
     borderColor:'rgb(200,200,200)',
     borderTopWidth:0.3636,
