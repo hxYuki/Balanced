@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Picker, TextInput, Dimensions, TouchableOpacity } from 'react-native';
-import { Overlay } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
+import { Overlay } from 'react-native-elements';
+import DatePicker from 'react-native-datepicker';
+import styles from './styles';
 
-windowHeight = Dimensions.get('window').height;
-windowWidth = Dimensions.get('window').width;
 class Floatwindow extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +14,7 @@ class Floatwindow extends Component {
             method: 0,
             usage: 0,
             notes: '',
+            cycle: 0,
             date: new Date(),
         };
     }
@@ -24,14 +24,14 @@ class Floatwindow extends Component {
     inputPart() {
         return (
             <View>
-                {this.myTextInput('amont', 'numeric')}
+                {this.myTextInput('amount', 'numeric')}
                 {this.myPicker('method', ['Alipay', 'WeChat', 'Cash'])}
                 {this.myPicker('usage', ['Entertainment', 'Catering', 'Education', 'Loan', 'Clothing', 'Daily', 'Expense'])}
                 {this.myTextInput('notes', 'default')}
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.text}>date:</Text>
                     <DatePicker
-                        style={{ width: 200,marginTop:15 }}
+                        style={{ width: 200, marginTop: 15 }}
                         date={this.state.date}
                         mode="date"
                         placeholder={this.state.date.toString()}
@@ -61,7 +61,7 @@ class Floatwindow extends Component {
     uncyclelyPart() {
         return (
             <View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
-                {this.myButtonModal('Back', () => this.setModalVisible(false, false))}
+                {this.myButtonModal('Clear', () => this.clearState())}
                 {this.myButtonModal('Submit')}
                 {this.myButtonModal('Next')}
             </View>
@@ -69,10 +69,13 @@ class Floatwindow extends Component {
     }
     cyclelyPart() {
         return (
-            <View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
-                {this.myButtonModal('Back', () => this.setModalVisible(false, false))}
-                {this.myButtonModal('Submit')}
-                {this.myButtonModal('Next')}
+            <View>
+                {this.myPicker('cycle', ['Month', 'Week', 'Day'])}
+                <View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
+                    {this.myButtonModal('Clear', () => this.clearState())}
+                    {this.myButtonModal('Submit')}
+                    {this.myButtonModal('Next')}
+                </View>
             </View>
         );
     }
@@ -115,7 +118,7 @@ class Floatwindow extends Component {
             </View>
         )
     }
-    myPicker = (item, data) => {
+    myPicker = (item, data) => {//To creat a picker,item is a state, data is a array
         let pickerItem = data.map((label, index) => {
             return (<Picker.Item label={label} value={index} key={toString(index)} />)
         });
@@ -131,7 +134,7 @@ class Floatwindow extends Component {
             </View>
         )
     }
-    myTextInput = (item, boardType) => {
+    myTextInput = (item, boardType) => {//
         return (
             <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.text}>{item}:</Text>
@@ -143,78 +146,15 @@ class Floatwindow extends Component {
             </View>
         )
     }
+    clearState = () => {
+        this.setState({
+            amount: '',
+            method: 0,
+            usage: 0,
+            notes: '',
+            cycle: 0,
+            date: new Date(),
+        });
+    }
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        position: 'absolute',
-        right: 20,
-        top: windowHeight - 200,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        width: 50,
-        height: 120,
-    },
-    button: {
-        backgroundColor: 'black',
-        borderColor: 'black',
-        borderWidth: 2,
-        borderRadius: 25,
-        width: 50,
-        height: 50,
-    },
-    button2: {
-        backgroundColor: 'black',
-        borderColor: 'black',
-        borderWidth: 2,
-        borderRadius: 25,
-        marginTop: 20,
-        width: 50,
-        height: 50,
-    },
-    picker: {
-        width: 200,
-        marginTop: 10,
-    },
-    text: {
-        color: 'black',
-        width: 100,
-        marginTop: 15,
-        height: 40,
-        fontSize: 25,
-    },
-    input: {
-        fontSize: 25,
-        borderBottomWidth: 1,
-        borderColor: 'black',
-        width: 200,
-    },
-    amount: {
-        color: 'black',
-    },
-    method: {
-        color: 'black',
-    },
-    usage: {
-        color: 'black',
-    },
-    notes: {
-        color: 'black',
-    },
-    viewModal: {
-        flex: 1,
-    },
-    myButtonModal: {
-        marginTop: 15,
-        backgroundColor: 'skyblue',
-        width: "85%",
-    },
-    textModal: {
-        color: 'black',
-        fontSize: 25,
-        textAlign: 'center',
-    },
-});
 export default Floatwindow;
