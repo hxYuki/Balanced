@@ -7,7 +7,7 @@ const DatabaseConfig = {
 const TableBasicAccounting = {
     name: 'BaseTable',
     fields: {
-        'id': 'INTEGER PRIMARY KEY NOT NULL AUTOINCREAMENT',
+        'id': 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ',
         'amount': 'DECIMAL NOT NULL',
         'note': 'TEXT',
         'method': 'INTEGER NOT NULL', // AliPay, WeChat, Cash

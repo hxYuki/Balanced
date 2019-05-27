@@ -3,10 +3,10 @@ import { StyleSheet, Text, View, Picker, TextInput, Dimensions, TouchableOpacity
 import { Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
-import { Database, TableBasicAccounting } from '../../config/DatabaseConfig';
+import { DatabaseConfig, TableBasicAccounting } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
 
-let db = new Sqlite(Database);
+let db = new Sqlite(DatabaseConfig);
 class Floatwindow extends Component {
 	constructor(props) {
 		super(props);
@@ -22,8 +22,8 @@ class Floatwindow extends Component {
 			date: new Date(),
 		};
 	}
-	componentWillMount(){	
-		db.createTable(TableBasicAccounting).catch((err)=>console.log("err         :"+err));
+	async componentWillMount(){
+		await db.createTable(TableBasicAccounting);
 	}
 	setModalVisible(visible, cyclely) {
 		this.setState({ isVisible: visible, cyclely: cyclely });
@@ -59,7 +59,7 @@ class Floatwindow extends Component {
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date }); console.log(new Date(this.state.date).getFullYear() - 2); }}
+						onDateChange={(date) => { this.setState({ date: date });}}
 					/>
 				</View>
 			</View>
@@ -172,8 +172,8 @@ class Floatwindow extends Component {
 			usage: this.state.usage,
 			cycleCount: this.state.cycleCount,
 			cycleUnit: this.state.cycleUnit,
-			firstTime: toString(this.state.date),
-			nextTriggerTime: toString(this.state.date),
+			firstTime: this.state.date.toString(),
+			nextTriggerTime: this.state.date.toString(),
 		});
 		this.clearData();
 		if (!next) this.setModalVisible(false, false);
