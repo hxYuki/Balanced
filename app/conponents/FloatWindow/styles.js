@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 120,
     },
-    button: {
+    buttonCycle: {
         backgroundColor: 'black',
         borderColor: 'black',
         borderWidth: 2,
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
     },
-    button2: {
+    buttonUncycle: {
         backgroundColor: 'black',
         borderColor: 'black',
         borderWidth: 2,

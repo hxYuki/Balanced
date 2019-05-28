@@ -19,7 +19,7 @@ class Floatwindow extends Component {
 			note: '',
 			cycleCount: -1,
 			cycleUnit: -1,
-			date: new Date(),
+			date: (this.getDatestr(new Date())),
 		};
 	}
 	async componentWillMount(){
@@ -41,7 +41,7 @@ class Floatwindow extends Component {
 						style={{ width: 200, marginTop: 15 }}
 						date={this.state.date}
 						mode="date"
-						placeholder={this.state.date.toString()}
+						placeholder={this.state.date}
 						format="YYYY-MM-DD"
 						minDate={(new Date().getFullYear() - 2) + "-01-01"}
 						maxDate={(new Date().getFullYear() + 2) + "-12-31"}
@@ -90,11 +90,11 @@ class Floatwindow extends Component {
 		return (
 			<View style={styles.container}>
 				<TouchableOpacity
-					style={styles.button}
+					style={styles.buttonCycle}
 					onPress={() => { this.setModalVisible(true, true); }}>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={styles.button2}
+					style={styles.buttonUncycle}
 					onPress={() => { this.setModalVisible(true, false); }}>
 				</TouchableOpacity>
 				<Overlay
@@ -161,7 +161,7 @@ class Floatwindow extends Component {
 			note: '',
 			cycleCount: null,
 			cycleUnit: 0,
-			date: new Date(),
+			date: (this.getDatestr(new Date())),
 		});
 	}
 	submitData(next) {
@@ -172,11 +172,14 @@ class Floatwindow extends Component {
 			usage: this.state.usage,
 			cycleCount: this.state.cycleCount,
 			cycleUnit: this.state.cycleUnit,
-			firstTime: this.state.date.toString(),
-			nextTriggerTime: this.state.date.toString(),
+			firstTime: this.state.date,
+			nextTriggerTime: this.state.date,
 		});
 		this.clearData();
 		if (!next) this.setModalVisible(false, false);
+	}
+	getDatestr=(date)=>{
+		return (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate());
 	}
 }
 export default Floatwindow;
