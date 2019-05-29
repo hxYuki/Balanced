@@ -7,7 +7,7 @@ import {List} from 'immutable';
 import {ListHeader} from './Components';
 import ThemeConfig from '../../config/ThemeConfig';
 import Sqlite from '../../lib/sqlite';
-import {Database, TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseConfig';
+import {TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseConfig';
 import Floatwindow from '../FloatWindow/FloatWindow';
 
 
@@ -67,7 +67,7 @@ export default class Main extends Component<Props>{
   async queryListData(){
     console.log('querying');
     
-    let results = await db.in(TableBasicAccounting.name).limit(10,countListData(this.state.accounts)).select();
+    let results = await db.in(TableBasicAccounting.name).limit(10,countListData(this.state.accounts)).orderedBy('firstTime','id','desc').select();
 
     if(!results)
     {
@@ -78,9 +78,39 @@ export default class Main extends Component<Props>{
   }
   async queryStatData(){
     // let expense = await db.in(TableBasicAccounting.name).field(['SUM(amount)']).where('amount>0').groupBy('firstTime')
-    // let r = await db.execRaw(`select firstTime, sum(amount) as total, strftime('%s','firstTime') as trueDate from ${TableBasicAccounting.name} group by trueDate`);
+    // let r = await db.execRaw(`select firstTime, sum(amount) as total, strftime('%m',firstTime) as trueDate from ${TableBasicAccounting.name} where amount>0 group by trueDate`);
+    let income = await db.in(TableBasicAccounting.name)
+      .field("usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
+      .groupBy('month')
+      .where('amount>0 and month=strftime("%m","now") and usage!=6')
+      .select();
+    let expense = await db.in(TableBasicAccounting.name)
+      .field("usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
+      .groupBy('month')
+      .where('amount<0 and month=strftime("%m","now") and usage!=6')
+      .select();
+    let deposit = await db.in(TableBasicAccounting.name)
+      .field("method, usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
+      .groupBy('month')
+      .where('month=strftime("%m","now") and (usage==6 or method==4)')
+      .select();
+    
     // let r= await db.execRaw(`select date('')`)
-    // console.log('test',r[0].rows.raw());
+    console.log(deposit);
+    
+    this.setState({
+      income:income?income[0]['total']:0,
+      expense:expense?expense[0]['total']:0,
+      deposit:deposit?deposit[0]['total']:0
+    })
+    
+    if(this.props.setTotalDeposit!==undefined){
+      let totalDeposit = await db.in(TableBasicAccounting.name)
+      .field("method, usage, sum(amount) as total")
+      .where('usage==6 or method==4')
+      .select();
+      this.props.setTotalDeposit(totalDeposit?totalDeposit[0]['total']:0)
+    }
     
   }
   render(){
