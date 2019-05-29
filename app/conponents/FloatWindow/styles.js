@@ -33,6 +33,12 @@ const styles = StyleSheet.create({
         width: 200,
         marginTop: 10,
     },
+    pickerCycleCount:{
+        width: 100,
+        marginTop: 10,
+        borderWidth:1,
+        borderColor:'black',
+    },
     text: {
         color: 'black',
         width: 80,
@@ -57,6 +63,9 @@ const styles = StyleSheet.create({
     },
     notes: {
         color: 'black',
+    },
+    cycleCount:{
+        width:100,
     },
     viewModal: {
         flex: 1,

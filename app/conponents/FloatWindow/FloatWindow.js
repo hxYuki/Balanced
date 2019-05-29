@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Picker, TextInput, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Picker, TextInput, Dimensions, TouchableOpacity,Alert } from 'react-native';
 import { Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
-import { DatabaseConfig, TableBasicAccounting } from '../../config/DatabaseConfig';
+import { DatabaseConfig, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
 
 let db = new Sqlite(DatabaseConfig);
@@ -17,12 +17,12 @@ class Floatwindow extends Component {
 			method: 0,
 			usage: 0,
 			note: '',
-			cycleCount: -1,
-			cycleUnit: -1,
+			cycleCount: null,
+			cycleUnit: 0,
 			date: (this.getDatestr(new Date())),
 		};
 	}
-	async componentWillMount(){
+	async componentWillMount() {
 		await db.createTable(TableBasicAccounting);
 	}
 	setModalVisible(visible, cyclely) {
@@ -32,8 +32,8 @@ class Floatwindow extends Component {
 		return (
 			<View>
 				{this.myTextInput('amount', 'numeric')}
-				{this.myPicker('method', ['Alipay', 'WeChat', 'Cash'])}
-				{this.myPicker('usage', ['Entertainment', 'Catering', 'Education', 'Loan', 'Clothing', 'Daily', 'Expense'])}
+				{this.myPicker('method', BaseTableFieldTitle.method)}
+				{this.myPicker('usage', BaseTableFieldTitle.usage)}
 				{this.myTextInput('note', 'default')}
 				<View style={{ flexDirection: 'row' }}>
 					<Text style={styles.text}>date:</Text>
@@ -59,7 +59,7 @@ class Floatwindow extends Component {
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date });}}
+						onDateChange={(date) => { this.setState({ date: date }); }}
 					/>
 				</View>
 			</View>
@@ -75,9 +75,24 @@ class Floatwindow extends Component {
 		);
 	}
 	cyclelyPart() {
+		let pickerItem = BaseTableFieldTitle.cycleUnit.map((label, index) => {
+			return (<Picker.Item label={label} value={index} key={toString(index)} />)
+		});
 		return (
 			<View>
-				{this.myPicker('cycle', ['Month', 'Week', 'Day'])}
+				<View style={{ flexDirection: 'row' }}>
+					<Text style={styles.text}>cycle:</Text>
+					<TextInput
+						style={styles.cycleCount}
+						onChangeText={(value) => this.setState({ cycleCount: value })}
+					>{this.state.cycleCount}</TextInput>
+					<Picker
+						style={styles.pickerCycleCount}
+						selectedValue={this.state.cycleUnit}
+						onValueChange={(value) => this.setState({ cycleUnit: value })}>
+						{pickerItem}
+					</Picker>
+				</View>
 				<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
 					{this.myButtonModal('Clear', () => this.clearData())}
 					{this.myButtonModal('Submit', () => this.submitData(false))}
@@ -165,6 +180,15 @@ class Floatwindow extends Component {
 		});
 	}
 	submitData(next) {
+		let str='';
+		if(this.state.amount==''){
+			Alert.alert("weitianxi1");
+			return;
+		}	
+		if ((this.state.cycleCount == '' || this.state.cycleCount == null) && this.state.cyclely == true){
+			Alert.alert("weitianxie2");
+			return;
+		}
 		db.in(TableBasicAccounting.name).insert({
 			amount: this.state.amount,
 			method: this.state.method,
@@ -178,7 +202,7 @@ class Floatwindow extends Component {
 		this.clearData();
 		if (!next) this.setModalVisible(false, false);
 	}
-	getDatestr=(date)=>{
+	getDatestr = (date) => {
 		return (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate());
 	}
 }
