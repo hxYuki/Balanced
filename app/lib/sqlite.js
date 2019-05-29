@@ -265,7 +265,7 @@ export default class Sqlite {
                 return false;
             })
 
-            return result;
+            return result.length===0?false:result;
         } catch (err) {
             whenFailed("select", err);
             return false;
