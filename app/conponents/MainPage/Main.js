@@ -5,19 +5,24 @@ import {Header, ListItem} from 'react-native-elements';
 
 import {ListHeader} from './Components';
 import ThemeConfig from '../../config/ThemeConfig';
-import sqlite from '../../lib/sqlite';
-import {Database} from '../../config/DatabaseConfig';
+import Sqlite from '../../lib/sqlite';
+import {Database, TableBasicAccounting} from '../../config/DatabaseConfig';
 import Floatwindow from '../FloatWindow/FloatWindow';
 
 
-var db = new sqlite(Database);
+
 
 const parseMonth=(n) => {return (new Date(n)).toLocaleString('en-Us', {month: 'long'});}
 
 type OpenDrawerCallback = ()=>{}
+type SetTotalDepositCallback = (totalDeposit:Number)=>{}
 type Props = {
-  openDrawer: OpenDrawerCallback
+  openDrawer: OpenDrawerCallback,
+  setTotalDeposit?: SetTotalDepositCallback,
+  db?: Sqlite
 }
+
+var db;
 export default class Main extends Component<Props>{
   constructor(props){
     super(props);
@@ -27,42 +32,44 @@ export default class Main extends Component<Props>{
       expense:0,
       deposit:0
     };
+    db=this.props.db;
   }
   componentDidMount(){
-    this.setState({
-      accounts: [{
-        title: 'May',
-        data: [1, 2, 3]
-      }, {
-        title: 'April',
-        data: [4, 5, 6, 7, 8, 9]
-      }]
-    });
+    this.queryData();
   }
-  processSections(initialData) {
+  processSections(initialData:Array) {
     if (initialData.length === 0) return;
     let t = {
       title: '',
       data: []
     };
     t.title = parseMonth(initialData[0]['firstTime']);
-    t.data = initialData.reduce((acc, v) => {
+    initialData.reduce((acc, v) => {
       if (t.title === parseMonth(v['firstTime']))
-        acc.push(v);
-    }, []);
+        t.data.push(v);
+    });
     this.setState({
       accounts: [...this.state.accounts, t]
     });
 
-    processSections(initialData.filter(v => t.title !== parseMonth(v['firstTime'])));
+    this.processSections(initialData.filter(v => t.title !== parseMonth(v['firstTime'])));
   }
   async queryData(){
-    try {
-      let results = await db.in('BaseTable').limit(10,this.state.accounts.length).select();
+    
+      console.log('querying');
+      
+      let results = await db.in(TableBasicAccounting.name).select();
+
+      // console.log('r',results);
+      
+      if(!results)
+      {
+        console.log('query failed',db);
+        
+        return;
+      }
       this.processSections(results);
-    } catch (e) {
-      console.log(e);
-    }
+    
   }
   
   render(){
@@ -84,9 +91,11 @@ export default class Main extends Component<Props>{
           ListHeaderComponent={<ListHeader income={this.state.income} expense={this.state.expense} deposit={this.state.deposit} />}
           renderItem={({item})=>(<ListItem containerStyle={MainStyle.ListItemStyle} topDivider bottomDivider leftIcon={{name:'flight-takeoff',color:ThemeConfig.themeStrongColor,reverse:true}} title={'Usage'} subtitle={'note'} rightTitle={'amount'} rightSubtitle={'date'} />)}
           keyExtractor={(item,index)=>index.toString()}
+          // onEndReachedThreshold={}
+          onEndReached={()=>{this.queryData()}}
         />
 
-        <Floatwindow />
+        {/* <Floatwindow /> */}
       </View>
     );
   }
