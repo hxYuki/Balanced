@@ -337,4 +337,25 @@ export default class Sqlite {
             return false;
         }
     }
+    /**
+     * Method for complex functionalities
+     * @param {String} sql Sql statement you want to execute, `?` for parameter holder
+     * @param {Array<Any>} params parameter should be given in same order
+     */
+    async execRaw(sql:string,params:any[]=[]){
+        try {
+            const result = await this.db.executeSql(sql,params).then(res => {
+                whenSuccess("exec");
+                return res;
+            }).catch(err => {
+                whenFailed("exec", err);
+                return false;
+            })
+
+            return result;
+        } catch (err) {
+            whenFailed("exec", err);
+            return false;
+        }
+    }
 }
