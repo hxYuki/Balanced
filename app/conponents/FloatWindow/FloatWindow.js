@@ -5,11 +5,15 @@ import DatePicker from 'react-native-datepicker';
 import styles from './styles';
 import { DatabaseConfig, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
-import { MyPicker } from "./Components";
+import moment from 'moment';
+import ThemeConfig from '../../config/ThemeConfig'
 
 // let db = new Sqlite(DatabaseConfig);
+type Props = {
+	db: Sqlite,
+	refresh: () => {},
+};
 let db;
-type Props={db:Sqlite};
 class Floatwindow extends Component<Props>{
 	constructor(props) {
 		super(props);
@@ -22,13 +26,13 @@ class Floatwindow extends Component<Props>{
 			Note: '',
 			cycle: null,
 			cycleUnit: 0,
-			date: (this.getDatestr(new Date())),
+			date: (moment().format("YYYY-MM-DD")),
 		};
-		db=this.Props.db;
+		db = this.props.db;
 	}
-	// async componentWillMount() {
-	// 	await db.createTable(TableBasicAccounting);
-	// }
+	async componentWillMount() {
+		await db.createTable(TableBasicAccounting);
+	}
 	setModalVisible(visible, cyclely) {
 		this.setState({ isVisible: visible, cyclely: cyclely });
 	}
@@ -40,11 +44,11 @@ class Floatwindow extends Component<Props>{
 					<Text style={styles.money}>￥</Text>
 					{this.myTextInput('Amount', 'numeric')}
 				</View>
-				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>Method:</Text>
 					{this.myPicker('Method', BaseTableFieldTitle.method)}
 				</View>
-				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>Usage:</Text>
 					{this.myPicker('Usage', BaseTableFieldTitle.usage)}
 				</View>
@@ -52,7 +56,7 @@ class Floatwindow extends Component<Props>{
 					<Text style={styles.text}>Note:</Text>
 					{this.myTextInput('Note', 'default')}
 				</View>
-				<View style={{ flexDirection: 'row' }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>date:</Text>
 					<DatePicker
 						style={{ width: 200, marginTop: 15 }}
@@ -60,10 +64,8 @@ class Floatwindow extends Component<Props>{
 						mode="date"
 						placeholder={this.state.date}
 						format="YYYY-MM-DD"
-						minDate={(new Date().getFullYear() - 2) + "-01-01"}
-						maxDate={(new Date().getFullYear() + 2) + "-12-31"}
-						confirmBtnText="Confirm"
-						cancelBtnText="Cancel"
+						minDate={(moment().add(-2,'Years').format("YYYY")) + "-01-01"}
+						maxDate={(moment().add(2,'Years').format("YYYY")) + "-12-31"}
 						androidMode="spinner"
 						customStyles={{
 							dateIcon: {
@@ -76,7 +78,7 @@ class Floatwindow extends Component<Props>{
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date }); }}
+						onDateChange={(date) => { this.setState({ date: date }); console.log(moment().add(-2, 'W').format("YYYY-MM-DD"))}}
 					/>
 				</View>
 			</View>
@@ -113,14 +115,14 @@ class Floatwindow extends Component<Props>{
 				<Icon
 					name='edit'
 					type='font-awesome'
-					color='#517fa4'
+					color={ThemeConfig.themeMainColor}
 					reverse
 					onPress={() => { this.setModalVisible(true, true); }}
 				/>
 				<Icon
-					name='edit'
+					name='plus-circle'
 					type='font-awesome'
-					color='#517fa4'
+					color={ThemeConfig.themeMainColor}
 					reverse
 					onPress={() => { this.setModalVisible(true, false); }}
 				/>
@@ -140,11 +142,11 @@ class Floatwindow extends Component<Props>{
 			</View>
 		);
 	}
-	myTextInput = (item,boardType) => {
+	myTextInput = (item, boardType) => {
 		return (
 			<TextInput
-				style={[styles.input,styles['input'+item]]}
-				onChangeText={(value) => this.setState({[item]: value })}
+				style={[styles.input, styles['input' + item]]}
+				onChangeText={(value) => this.setState({ [item]: value })}
 				keyboardType={boardType}
 			>{this.state[item]}</TextInput>
 		);
@@ -177,12 +179,12 @@ class Floatwindow extends Component<Props>{
 	clearData() {
 		this.setState({
 			Amount: '',
-			method: 0,
-			usage: 0,
-			note: '',
+			Method: 0,
+			Usage: 0,
+			Note: '',
 			cycle: null,
 			cycleUnit: 0,
-			date: (this.getDatestr(new Date())),
+			date: (moment().format("YYYY-MM-DD")),
 		});
 	}
 	async submitData(next) {
@@ -191,16 +193,22 @@ class Floatwindow extends Component<Props>{
 			str = 'Please enter Amount';
 		else if (this.state.Amount == '0')
 			str = 'Amount can\'t be zero';
-		else if ((this.state.cycle == '' || this.state.cycle == null) && this.state.cyclely == true)
-			str = 'Please enter cycle';
-		else if (this.state.cycle == '0' && this.state.cyclely == true)
-			str = 'Cycle can\'t be zero';
+		else if (isNaN(this.state.Amount))
+			str = 'Amount should be a number';
+		else if (this.state.cyclely == true) {
+			if (this.state.cycle == '' || this.state.cycle == null)
+				str = 'Please enter cycle';
+			else if (this.state.cycle == '0')
+				str = 'Cycle can\'t be zero';
+			else if (isNaN(this.state.cycle))
+				str = 'cycle should be a number';
+		}
 		if (str != '') {
 			ToastAndroid.showWithGravity(str, ToastAndroid.LONG, ToastAndroid.CENTER);
 			return;
 		}
 		await db.in(TableBasicAccounting.name).insert({
-			Amount: this.state.Amount,
+			amount: this.state.Amount,
 			method: this.state.Method,
 			note: this.state.Note,
 			usage: this.state.Usage,
@@ -210,11 +218,9 @@ class Floatwindow extends Component<Props>{
 			nextTriggerTime: this.state.date,
 		});
 		this.clearData();
+		this.props.refresh;
 		ToastAndroid.showWithGravity('Submit success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
 		if (!next) this.setModalVisible(false, false);
-	}
-	getDatestr = (date) => {
-		return (date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate());
 	}
 }
 export default Floatwindow;

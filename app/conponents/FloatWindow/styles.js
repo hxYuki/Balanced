@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         width: 200,
     },
     cycleUnitPicker: {
-        width: 100,
+        width: 120,
         borderWidth: 1,
         borderColor: 'black',
     },
@@ -58,7 +58,8 @@ const styles = StyleSheet.create({
     },
     textModal: {
         color: 'white',
-        fontSize: 25,
+        fontSize: 20,
+        height:30,
         textAlign: 'center',
     },
     textClear: {
