@@ -198,7 +198,8 @@ export default class Sqlite {
      */
     async insert(inserted_data) {
         const data = inserted_data instanceof Array ? inserted_data : [inserted_data];
-
+        // console.log('11111111',this._tableName);
+        const tName = this._tableName;
         await this.db;
         try {
             let results = [];
@@ -211,8 +212,9 @@ export default class Sqlite {
                         fields.push(k);
                         values.push(v[k]);
                     }
-
-                    const sql = `INSERT INTO ${this._tableName} (${fields.join(',')}) VALUES (${fields.map(v=>v&&'?').join(',')});`;
+                    // console.log('222222',this._tableName);
+                    
+                    const sql = `INSERT INTO ${tName} (${fields.join(',')}) VALUES (${fields.map(v=>v&&'?').join(',')});`;
 
                     tx.executeSql(sql, values).then(res => {
                         results.push(res[1].insertId);

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid} from 'react-native';
+import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {List} from 'immutable';
@@ -11,9 +11,9 @@ import {TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseCo
 import Floatwindow from '../FloatWindow/FloatWindow';
 
 
+const height = Dimensions.get('window').height;
 
-
-const parseMonth=(n) => {return (moment(n).format('MMMM'));}
+const parseYearMonth=(n) => {return (moment(n).format('YYYY-MM'));}
 const countListData = (list: List) => (list.reduce((acc,v)=>(acc+v.data.length),0))
 
 type OpenDrawerCallback = ()=>{}
@@ -21,7 +21,7 @@ type SetTotalDepositCallback = (totalDeposit:Number)=>{}
 type Props = {
   openDrawer: OpenDrawerCallback,
   setTotalDeposit?: SetTotalDepositCallback,
-  db?: Sqlite
+  db: Sqlite
 }
 
 var db:Sqlite;
@@ -35,20 +35,19 @@ export default class Main extends Component<Props>{
       deposit:0
     };
     db=this.props.db;
-
   }
   componentDidMount(){
     this.queryListData();
     this.queryStatData();
   }
-  async processSections(initialData:Array) {
+  processSections(initialData:Array) {
     if (initialData.length === 0) return;
     let t = {
       title: '',
       data: []
     };
-    t.title = parseMonth(initialData[0]['firstTime']);
-    t.data = initialData.filter(v => t.title === parseMonth(v['firstTime']));
+    t.title = parseYearMonth(initialData[0]['firstTime']);
+    t.data = initialData.filter(v => t.title === parseYearMonth(v['firstTime']));
     let hasIndex = -1;
     if (-1 !== (hasIndex = this.state.accounts.findIndex(v => v.title === t.title))) {
       let newT = this.state.accounts.get(hasIndex);
@@ -62,16 +61,17 @@ export default class Main extends Component<Props>{
       });
     }
     
-    return this.processSections(initialData.filter(v => t.title !== parseMonth(v['firstTime'])));
+    return this.processSections(initialData.filter(v => t.title !== parseYearMonth(v['firstTime'])));
   }
   async queryListData(){
     console.log('querying');
     
-    let results = await db.in(TableBasicAccounting.name).limit(10,countListData(this.state.accounts)).orderedBy('firstTime','id','desc').select();
-
+    let results = await db.in(TableBasicAccounting.name).limit(10,countListData(this.state.accounts)).orderedBy('id','desc').select();
+    // console.log(results);
+    
     if(!results)
     {
-      ToastAndroid.show('Failed to connect to DB!');
+      ToastAndroid.show('No more records!',ToastAndroid.SHORT);
       return;
     }
     this.processSections(results);
@@ -94,28 +94,30 @@ export default class Main extends Component<Props>{
       .groupBy('month')
       .where('month=strftime("%m","now") and (usage==6 or method==4)')
       .select();
-    
-    // let r= await db.execRaw(`select date('')`)
-    console.log(deposit);
-    
+     
     this.setState({
       income:income?income[0]['total']:0,
       expense:expense?expense[0]['total']:0,
       deposit:deposit?deposit[0]['total']:0
     })
+
+    // if(this.props.setTotalDeposit!==undefined){
+    //   let totalDeposit = await db.in(TableBasicAccounting.name)
+    //     .field("method, usage, sum(amount) as total")
+    //     .where('usage==6 or method==4')
+    //     .select();
+    //   this.props.setTotalDeposit(totalDeposit?totalDeposit[0]['total']:0)
+    // }
     
-    if(this.props.setTotalDeposit!==undefined){
-      let totalDeposit = await db.in(TableBasicAccounting.name)
-      .field("method, usage, sum(amount) as total")
-      .where('usage==6 or method==4')
-      .select();
-      this.props.setTotalDeposit(totalDeposit?totalDeposit[0]['total']:0)
-    }
-    
+  }
+  async refreshAfterSubmitted(){
+    await this.queryListData();
+    await this.queryStatData();
+    this.refs['section'].props.refreshing=false
   }
   render(){
     return (
-      <View>
+      <View style={{height:height}}>
         <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
           backgroundColor={ThemeConfig.themeMainColor}
@@ -127,8 +129,9 @@ export default class Main extends Component<Props>{
         />
         <SectionList
           sections={this.state.accounts.toJS()}
+          ref={'section'}
           stickySectionHeadersEnabled
-          renderSectionHeader={({section:{title}})=><Text style={MainStyle.SectionHeaderStyle}>{title}</Text>}
+          renderSectionHeader={({section:{title}})=><Text style={MainStyle.SectionHeaderStyle}>{moment(title).format('MMMM')}</Text>}
           ListHeaderComponent={<ListHeader income={this.state.income} expense={this.state.expense} deposit={this.state.deposit} />}
           renderItem={({ item }) => 
             (<ListItem
@@ -143,7 +146,17 @@ export default class Main extends Component<Props>{
             />)}
           keyExtractor={(item,index)=>index.toString()}
           // onEndReachedThreshold={}
-          // onEndReached={()=>{this.queryListData()}}
+          onEndReached={()=>{this.queryListData()}}
+          refreshing={false}
+          onRefresh={()=>{
+            this.refs['section'].props.refreshing=true;
+            this.setState({
+              accounts: this.state.accounts.clear(),
+              income: 0,
+              expense: 0,
+              deposit: 0
+            }, ()=>{this.refreshAfterSubmitted()});
+          }}
         />
 
         {/* <Floatwindow /> */}
