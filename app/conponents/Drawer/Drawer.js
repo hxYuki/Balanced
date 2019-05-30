@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,DrawerLayoutAndroid,StyleSheet,Text} from 'react-native';
+import {View,DrawerLayoutAndroid,StyleSheet,Text,TouchableOpacity} from 'react-native';
 import { Icon } from 'react-native-elements'
 
 export default class Drawer extends Component{
@@ -13,27 +13,27 @@ export default class Drawer extends Component{
     return(
     <View style={{flex:1,justifyContent:'flex-start'}}>
       <View style={styles.NavigaterHead}><Text style={{fontSize:20,color:'white',fontWeight:'700'}}>Total Deposit : ￥</Text></View>
-      <View style={styles.NavigateItem}>
+      <TouchableOpacity style={styles.NavigateItem} onPress={()=>this._ChangeMainPage()}>
         <Icon name = 'pie-chart' type = 'material' size={35} color='grey' />
-        <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Statistics</Text>
+        <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>{this.state.MainPageFlag==true?("Statistics"):("MainPage")}</Text>
         <View  style={styles.right_arrow}>
           <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
         </View>
-      </View>
-      <View style={styles.NavigateItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.NavigateItem}>
         <Icon name = 'backup' type = 'material' size={35} color='grey' / >
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Cloud Backup</Text>
         <View  style={styles.right_arrow}>
           <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
         </View>
-      </View>
-      <View style={styles.NavigateItem}>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.NavigateItem}>
         <Icon name = 'cloud-download' type = 'material' size={35} color='grey' / >
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Restore</Text>
         <View  style={styles.right_arrow}>
           <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   )};
 
@@ -41,10 +41,20 @@ export default class Drawer extends Component{
     this.refs.drawerLayout.openDrawer();
   }
 
+  closeDrawer() {
+    this.refs.drawerLayout.closeDrawer()
+  }
+
+  _ChangeMainPage=()=>{
+    let flag=!this.state.MainPageFlag;
+    this.setState({MainPageFlag:flag});
+    this.closeDrawer();
+  }
+
   render(){
     return(
       <DrawerLayoutAndroid 
-        refs={'drawerLayout'}
+        ref={'drawerLayout'}
         drawerWidth={300}
         drawerPosition={DrawerLayoutAndroid.positions.Left}
         renderNavigationView={this.DrawerIn}
@@ -88,6 +98,6 @@ const styles = StyleSheet.create({
   },
   right_arrow : {
     position:'absolute',
-    right:20,
+    right:15,
   },
 });
