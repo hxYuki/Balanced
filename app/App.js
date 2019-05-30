@@ -11,8 +11,8 @@ import {AsyncStorage, ToastAndroid,View} from 'react-native';
 import moment from 'moment';
 import './extends/Number';
 
-import Main from './conponents/MainPage/Main';
-import Drawer from './conponents/Drawer/Drawer';
+import Main from './components/MainPage/Main';
+import Drawer from './components/Drawer/Drawer';
 import Sqlite from './lib/sqlite';
 import { DatabaseConfig, TableBasicAccounting, TableTags, DBVersion, BaseTableFieldTitle } from './config/DatabaseConfig';
 
