@@ -16,14 +16,23 @@ export default class Drawer extends Component{
       <View style={styles.NavigateItem}>
         <Icon name = 'pie-chart' type = 'material' size={35} color='grey' />
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Statistics</Text>
+        <View  style={styles.right_arrow}>
+          <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
+        </View>
       </View>
       <View style={styles.NavigateItem}>
         <Icon name = 'backup' type = 'material' size={35} color='grey' / >
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Cloud Backup</Text>
+        <View  style={styles.right_arrow}>
+          <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
+        </View>
       </View>
       <View style={styles.NavigateItem}>
         <Icon name = 'cloud-download' type = 'material' size={35} color='grey' / >
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Restore</Text>
+        <View  style={styles.right_arrow}>
+          <Icon name = 'chevron-right' type = 'material' size={35} color='grey' />
+        </View>
       </View>
     </View>
   )};
@@ -76,5 +85,9 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     alignItems:'center',
     paddingLeft:20,
+  },
+  right_arrow : {
+    position:'absolute',
+    right:20,
   },
 });
