@@ -8,11 +8,12 @@
 
 import React, {Component} from 'react';
 import {AsyncStorage, ToastAndroid,View} from 'react-native';
+import moment from 'moment';
 import './extends/Number';
 
 import Main from './conponents/MainPage/Main';
 import Sqlite from './lib/sqlite';
-import { DatabaseConfig, TableBasicAccounting, TableTags, DBVersion } from './config/DatabaseConfig';
+import { DatabaseConfig, TableBasicAccounting, TableTags, DBVersion, BaseTableFieldTitle } from './config/DatabaseConfig';
 
 
 const checkUpdated = async () => {
@@ -33,12 +34,26 @@ const checkUpdated = async () => {
   return 'updated';
 }
 const updateCycles = async () => {
+  // const map = {
+  //   'Year':'y',
+  //   'Month':'m',
+  //   ''
+  // }
   try{
     console.log('updating');
     
-    let cycles = await db.in(TableBasicAccounting.name).where('cycleCount is not null AND nextTriggerTime is not null').select();
-    console.log(cycles);
+    let cycles = await db.in(TableBasicAccounting.name).field('*').where('cycleCount is not null AND nextTriggerTime==date("now")').select();
+    // console.log('toUpdate',cycles);
     
+    cycles.forEach(v=>{
+      let d = {...v,nextTriggerTime:null,firstTime:v.nextTriggerTime,cycleCount:null};
+      delete d.id;
+      // console.log('cycle',d);
+      db.in(TableBasicAccounting.name).insert(d);
+      db.in(TableBasicAccounting.name).where(`id==${v.id}`).update({'nextTriggerTime':moment(v.nextTriggerTime).add(v.cycleCount,BaseTableFieldTitle.cycleUnit[v.cycleUnit]).format('YYYY-MM-DD')});
+      // console.log('next',moment(v.nextTriggerTime).add('W',v.cycleCount).format('YYYY-MM-DD'));
+      
+    })
     // let cyclesNeedUpdate = cycles.filter()
   }catch(e){
 
@@ -53,24 +68,30 @@ const popinSomeData = async () => {
       usage:0,
       cycleCount:1,
       cycleUnit:0,
-      firstTime: new Date()
-    },
-    {
+      firstTime: moment().format('YYYY-MM-DD')
+    },{
       amount:25,
       note:'',
       method:0,
       usage:0,
-      firstTime: (new Date()).toString()
-    },
-    {
+      firstTime: moment().format('YYYY-MM-DD')
+    },{
       amount:100,
       note:'',
       method:0,
       usage:0,
-      firstTime: (new Date()).toString()
+      firstTime: moment().format('YYYY-MM-DD')
+    },{
+      amount:-40,
+      note:'',
+      method:0,
+      usage:0,
+      firstTime: moment().add(-1,'y').format('YYYY-MM-DD'),
+      nextTriggerTime: moment().format('YYYY-MM-DD'),
+      cycleCount: 10
     }
   ];
-  await db.in('BaseTable').insert(data);
+  await db.in(TableBasicAccounting.name).insert(data);
   console.log('data ok');
   
 }
@@ -161,11 +182,15 @@ export default class App extends Component<Props> {
     // console.log(DatabaseConfig,{name:'Balanced'});
     
     // checkThings().then(()=>{
-      // popinSomeData();
+    //   // popinSomeData();
     // })
     // clearStorage();
-    // clearDB();
-    // updateCycles();
+    // clearDB().then(()=>{
+    //   return checkThings();
+    // }).then(()=>{
+    //   popinSomeData();
+    // })
+    updateCycles();
   }
   componentDidMount(){
     // clearDB();
