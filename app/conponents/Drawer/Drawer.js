@@ -6,7 +6,7 @@ export default class Drawer extends Component{
   constructor(props){
     super(props);
     this.state={TotalDeposit:0,MainPageFlag:true};
-    this.DrawerIn=this.DrawerIn.bind(this)
+    this.DrawerIn=this.DrawerIn.bind(this);
   }
 
   DrawerIn=()=>{
@@ -14,16 +14,16 @@ export default class Drawer extends Component{
     <View style={{flex:1,justifyContent:'flex-start'}}>
       <View style={styles.NavigaterHead}><Text style={{fontSize:20,color:'white',fontWeight:'700'}}>Total Deposit : ￥</Text></View>
       <View style={styles.NavigateItem}>
-        <Icon name = 'pie-chart' type = 'material' / >
-        <Text style={{fontSize:20}}>Statistics</Text>
+        <Icon name = 'pie-chart' type = 'material' size={35} color='grey' />
+        <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Statistics</Text>
       </View>
       <View style={styles.NavigateItem}>
-        <Icon name = 'backup' type = 'material' / >
-        <Text style={{fontSize:20}}>Cloud Backup</Text>
+        <Icon name = 'backup' type = 'material' size={35} color='grey' / >
+        <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Cloud Backup</Text>
       </View>
       <View style={styles.NavigateItem}>
-        <Icon name = 'cloud-download' type = 'material' / >
-        <Text style={{fontSize:20}}>Restore</Text>
+        <Icon name = 'cloud-download' type = 'material' size={35} color='grey' / >
+        <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>Restore</Text>
       </View>
     </View>
   )};
@@ -75,5 +75,6 @@ const styles = StyleSheet.create({
     height:60,
     flexDirection:'row',
     alignItems:'center',
+    paddingLeft:20,
   },
 });
