@@ -7,7 +7,7 @@ const DatabaseConfig = {
 const TableBasicAccounting = {
     name: 'BaseTable',
     fields: {
-        'id': 'INTEGER PRIMARY KEY NOT NULL AUTOINCREAMENT',
+        'id': 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL',
         'amount': 'DECIMAL NOT NULL',
         'note': 'TEXT',
         'method': 'INTEGER NOT NULL', // AliPay, WeChat, Cash
@@ -20,15 +20,15 @@ const TableBasicAccounting = {
     }
 }
 const BaseTableFieldTitle = {
-    method:['AliPay','WeChat','Cash'],
-    usage:['Entertainment','Catering','Education','Loan','Clothing','Daily Expense'],
+    method:['AliPay','WeChat','Cash','Credit Card','Deposit'],
+    usage:['Entertainment','Catering','Education','Loan','Clothing','Daily Expense','Deposit'],
     cycleUnit:['Year','Month','Week','Day']
 }
 
 const TableTags = {
     name: 'TagTable',
     fields:{
-        'id': 'INTEGER PRIMARY NOT NULL AUTOINCREAMENT',
+        'id': 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL',
         'title': 'TEXT',
     }
 }

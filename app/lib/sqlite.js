@@ -27,6 +27,9 @@ type TableConfig = {
 
 // }
 
+let whenSuccess=()=>{}
+let whenFailed=()=>{}
+
 export default class Sqlite {
     constructor(database_config: DatabaseConfig) {
         this.db;
@@ -43,12 +46,12 @@ export default class Sqlite {
 
 
         if (this.dbConfig) {
-            this.whenSuccess = this.dbConfig.success ? this.dbConfig.success : (action) => {
+            whenSuccess = this.dbConfig.success ? this.dbConfig.success : (action) => {
                 console.log(action + " success");
             };
             delete this.dbConfig.success;
 
-            this.whenFailed = this.dbConfig.failed ? this.dbConfig.failed : (action, err) => {
+            whenFailed = this.dbConfig.failed ? this.dbConfig.failed : (action, err) => {
                 console.log(action + " failed");
                 console.log('ERR: ', err);
             };
@@ -77,7 +80,7 @@ export default class Sqlite {
      */
     async open() {
         this.db = await sqlite.openDatabase(this.dbConfig).catch(err => {
-            this.whenFailed('open', err)
+            whenFailed('open', err)
         });
     }
 
@@ -89,10 +92,10 @@ export default class Sqlite {
             try {
                 this.db.close().then(() => {
                     this.db = null;
-                    this.whenSuccess("close");
+                    whenSuccess("close");
                 });
             } catch (err) {
-                this.whenFailed("close", err);
+                whenFailed("close", err);
             }
         }
 
@@ -146,7 +149,7 @@ export default class Sqlite {
     //     let sql = '.tables'
     //     this.db.executeSql(sql).then(rec=>{
     //         console.log(rec);
-    //     }).catch(err=>this.whenFailed('show',err))
+    //     }).catch(err=>whenFailed('show',err))
     // }
 
     /**
@@ -166,10 +169,10 @@ export default class Sqlite {
         await this.db;
         try {
             this.db.executeSql(sql).then(() => {
-                this.whenSuccess("creation");
+                whenSuccess("creation");
             })
         } catch (err) {
-            this.whenFailed("creation", err);
+            whenFailed("creation", err);
         }
     }
     /**
@@ -182,10 +185,10 @@ export default class Sqlite {
         await this.db;
         try {
             this.db.executeSql(sql).then(() => {
-                this.whenSuccess("drop");
+                whenSuccess("drop");
             });
         } catch (err) {
-            this.whenFailed("drop", err);
+            whenFailed("drop", err);
         }
     }
     /**
@@ -195,7 +198,8 @@ export default class Sqlite {
      */
     async insert(inserted_data) {
         const data = inserted_data instanceof Array ? inserted_data : [inserted_data];
-
+        // console.log('11111111',this._tableName);
+        const tName = this._tableName;
         await this.db;
         try {
             let results = [];
@@ -208,13 +212,14 @@ export default class Sqlite {
                         fields.push(k);
                         values.push(v[k]);
                     }
-
-                    const sql = `INSERT INTO ${this._tableName} (${fields.join(',')}) VALUES (${fields.map(v=>v&&'?').join(',')});`;
+                    // console.log('222222',this._tableName);
+                    
+                    const sql = `INSERT INTO ${tName} (${fields.join(',')}) VALUES (${fields.map(v=>v&&'?').join(',')});`;
 
                     tx.executeSql(sql, values).then(res => {
                         results.push(res[1].insertId);
                     }).catch(err => {
-                        this.whenFailed(`insert[${i}]`, err);
+                        whenFailed(`insert[${i}]`, err);
                     });
                 });
             });
@@ -225,7 +230,7 @@ export default class Sqlite {
             
             return results;
         } catch (err) {
-            this.whenFailed('all inserts', err);
+            whenFailed('all inserts', err);
             return false;
         }
     }
@@ -246,20 +251,25 @@ export default class Sqlite {
         this.afterQuery();
 
         // let ret;
-        await this.db;
+        // while(!this.db){
+        //     await this.open();
+        //     console.log('reopening DB');
+            
+        // }
+        await this.db
         try {
-            const result = await this.db.executeSql(sql).then(res => {
-                this.whenSuccess("select");
+            const result = await this.db.executeSql(sql,[]).then(res => {
+                whenSuccess("select");
                 // console.log('res:',);
                 return res[0].rows.raw();
             }).catch(err => {
-                this.whenFailed("select", err);
+                whenFailed("select", err);
                 return false;
             })
 
-            return result;
+            return result.length===0?false:result;
         } catch (err) {
-            this.whenFailed("select", err);
+            whenFailed("select", err);
             return false;
         }
     }
@@ -271,7 +281,7 @@ export default class Sqlite {
      */
     async update(updated_data) {
         if (!this._tableWhere.toString()) {
-            this.whenFailed("update", "condition cannot be null");
+            whenFailed("update", "condition cannot be null");
             return false;
         }
         let fields = [];
@@ -286,17 +296,17 @@ export default class Sqlite {
         await this.db;
         try {
             const result = await this.db.executeSql(sql).then(res => {
-                this.whenSuccess("update");
+                whenSuccess("update");
 
                 return res[0].rowsAffected;
             }).catch(err => {
-                this.whenFailed("update", err);
+                whenFailed("update", err);
                 return false;
             })
 
             return result;
         } catch (err) {
-            this.whenFailed("update", err);
+            whenFailed("update", err);
             return false;
         }
     }
@@ -307,7 +317,7 @@ export default class Sqlite {
      */
     async delete() {
         if (!this._tableWhere.toString()) {
-            this.whenFailed("delete", "condition cannot be null");
+            whenFailed("delete", "condition cannot be null");
             return false;
         }
         const sql = `DELETE FROM ${this._tableName} WHERE ${this._tableWhere.join(' AND ')};`;
@@ -315,17 +325,38 @@ export default class Sqlite {
         await this.db;
         try {
             const result = await this.db.executeSql(sql).then(res => {
-                this.whenSuccess("delete");
+                whenSuccess("delete");
 
                 return res[0].rowsAffected;
             }).catch(err => {
-                this.whenFailed("delete", err);
+                whenFailed("delete", err);
                 return false;
             })
 
             return result;
         } catch (err) {
-            this.whenFailed("delete", err);
+            whenFailed("delete", err);
+            return false;
+        }
+    }
+    /**
+     * Method for complex functionalities
+     * @param {String} sql Sql statement you want to execute, `?` for parameter holder
+     * @param {Array<Any>} params parameter should be given in same order
+     */
+    async execRaw(sql:string,params:any[]=[]){
+        try {
+            const result = await this.db.executeSql(sql,params).then(res => {
+                whenSuccess("exec");
+                return res;
+            }).catch(err => {
+                whenFailed("exec", err);
+                return false;
+            })
+
+            return result;
+        } catch (err) {
+            whenFailed("exec", err);
             return false;
         }
     }
