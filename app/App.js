@@ -11,9 +11,8 @@ import {AsyncStorage, ToastAndroid,View} from 'react-native';
 import './extends/Number';
 
 import Main from './conponents/MainPage/Main';
-import Floatwindow from './conponents/FloatWindow/FloatWindow';
 import Sqlite from './lib/sqlite';
-import { Database, TableBasicAccounting, TableTags, DBVersion } from './config/DatabaseConfig';
+import { DatabaseConfig, TableBasicAccounting, TableTags, DBVersion } from './config/DatabaseConfig';
 
 
 const checkUpdated = async () => {
@@ -33,6 +32,48 @@ const checkUpdated = async () => {
   //
   return 'updated';
 }
+const updateCycles = async () => {
+  try{
+    console.log('updating');
+    
+    let cycles = await db.in(TableBasicAccounting.name).where('cycleCount is not null AND nextTriggerTime is not null').select();
+    console.log(cycles);
+    
+    // let cyclesNeedUpdate = cycles.filter()
+  }catch(e){
+
+  }
+}
+const popinSomeData = async () => {
+  const data = [
+    {
+      amount:10,
+      note:'',
+      method:0,
+      usage:0,
+      cycleCount:1,
+      cycleUnit:0,
+      firstTime: new Date()
+    },
+    {
+      amount:25,
+      note:'',
+      method:0,
+      usage:0,
+      firstTime: (new Date()).toString()
+    },
+    {
+      amount:100,
+      note:'',
+      method:0,
+      usage:0,
+      firstTime: (new Date()).toString()
+    }
+  ];
+  await db.in('BaseTable').insert(data);
+  console.log('data ok');
+  
+}
 const clearStorage = async () => {
   try {
     AsyncStorage.clear();
@@ -42,18 +83,24 @@ const clearStorage = async () => {
 }
 const initDB = async () => {
   try {
-    db.createTable(TableBasicAccounting);
-    db.createTable(TableTags);
+    await db.createTable(TableBasicAccounting);
+    await db.createTable(TableTags);
+    console.log('init ed');
   } catch (e) {
     console.log('Init err: ',e);
     return false;
   }
+  
 }
 const checkDatabase = async () => {
   try{
+    console.log('checking');
+    
     let dbVersion = await AsyncStorage.getItem('dbVersion');
     if(!dbVersion){
       ToastAndroid.show('Initializing...',ToastAndroid.LONG);
+      console.log('initializing');
+      
       await initDB();
       AsyncStorage.setItem('dbVersion',DBVersion);
     }
@@ -64,6 +111,17 @@ const checkDatabase = async () => {
     return 'unchecked';
   }
   return 'NO DB';
+}
+const clearDB = async () => {
+  try{
+    AsyncStorage.removeItem('dbVersion');
+    await db.dropTable(TableBasicAccounting.name);
+    await db.dropTable(TableTags.name);
+    console.log('clear!');
+  }catch(e){
+    console.log(e);
+  }
+  
 }
 
 const checkThings = async ()=>{
@@ -84,6 +142,7 @@ const checkThings = async ()=>{
     switch(res){
       case 'outdated':
         //TODO: update
+        updateCycles();
         break;
       case 'updated':
         break;
@@ -92,19 +151,30 @@ const checkThings = async ()=>{
     }
   });
 }
-let db = new Sqlite(Database);
+
+var db= new Sqlite(DatabaseConfig);
 type Props = {};
 export default class App extends Component<Props> {
   constructor(props){
     super(props);
     
-    checkThings();
+    // console.log(DatabaseConfig,{name:'Balanced'});
+    
+    // checkThings().then(()=>{
+      // popinSomeData();
+    // })
     // clearStorage();
+    // clearDB();
+    // updateCycles();
+  }
+  componentDidMount(){
+    // clearDB();
+
   }
   render() {
-    return (// TODO: Replace this with Drawer component
+    return (// TODO : Replace this with Drawer component
       <View>
-        <Main />
+        <Main openDrawer={()=>{}} db={db} />
 
       </View>
     );

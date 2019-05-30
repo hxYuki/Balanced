@@ -1,40 +1,57 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Picker, TextInput, Dimensions, TouchableOpacity,Alert } from 'react-native';
+import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
 import { DatabaseConfig, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
+import { MyPicker } from "./Components";
 
-let db = new Sqlite(DatabaseConfig);
-class Floatwindow extends Component {
+// let db = new Sqlite(DatabaseConfig);
+let db;
+type Props={db:Sqlite};
+class Floatwindow extends Component<Props>{
 	constructor(props) {
 		super(props);
 		this.state = {
 			isVisible: false,
 			cyclely: false,
-			amount: '',
-			method: 0,
-			usage: 0,
-			note: '',
-			cycleCount: null,
+			Amount: '',
+			Method: 0,
+			Usage: 0,
+			Note: '',
+			cycle: null,
 			cycleUnit: 0,
 			date: (this.getDatestr(new Date())),
 		};
+		db=this.Props.db;
 	}
-	async componentWillMount() {
-		await db.createTable(TableBasicAccounting);
-	}
+	// async componentWillMount() {
+	// 	await db.createTable(TableBasicAccounting);
+	// }
 	setModalVisible(visible, cyclely) {
 		this.setState({ isVisible: visible, cyclely: cyclely });
 	}
 	inputPart() {
 		return (
 			<View>
-				{this.myTextInput('amount', 'numeric')}
-				{this.myPicker('method', BaseTableFieldTitle.method)}
-				{this.myPicker('usage', BaseTableFieldTitle.usage)}
-				{this.myTextInput('note', 'default')}
+				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+					<Text style={styles.text}>Amount:</Text>
+					<Text style={styles.money}>￥</Text>
+					{this.myTextInput('Amount', 'numeric')}
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
+					<Text style={styles.text}>Method:</Text>
+					{this.myPicker('Method', BaseTableFieldTitle.method)}
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
+					<Text style={styles.text}>Usage:</Text>
+					{this.myPicker('Usage', BaseTableFieldTitle.usage)}
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+					<Text style={styles.text}>Note:</Text>
+					{this.myTextInput('Note', 'default')}
+				</View>
 				<View style={{ flexDirection: 'row' }}>
 					<Text style={styles.text}>date:</Text>
 					<DatePicker
@@ -75,23 +92,12 @@ class Floatwindow extends Component {
 		);
 	}
 	cyclelyPart() {
-		let pickerItem = BaseTableFieldTitle.cycleUnit.map((label, index) => {
-			return (<Picker.Item label={label} value={index} key={toString(index)} />)
-		});
 		return (
 			<View>
-				<View style={{ flexDirection: 'row' }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
 					<Text style={styles.text}>cycle:</Text>
-					<TextInput
-						style={styles.cycleCount}
-						onChangeText={(value) => this.setState({ cycleCount: value })}
-					>{this.state.cycleCount}</TextInput>
-					<Picker
-						style={styles.pickerCycleCount}
-						selectedValue={this.state.cycleUnit}
-						onValueChange={(value) => this.setState({ cycleUnit: value })}>
-						{pickerItem}
-					</Picker>
+					{this.myTextInput('cycle', 'numeric')}
+					{this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
 				</View>
 				<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
 					{this.myButtonModal('Clear', () => this.clearData())}
@@ -104,14 +110,20 @@ class Floatwindow extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<TouchableOpacity
-					style={styles.buttonCycle}
-					onPress={() => { this.setModalVisible(true, true); }}>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.buttonUncycle}
-					onPress={() => { this.setModalVisible(true, false); }}>
-				</TouchableOpacity>
+				<Icon
+					name='edit'
+					type='font-awesome'
+					color='#517fa4'
+					reverse
+					onPress={() => { this.setModalVisible(true, true); }}
+				/>
+				<Icon
+					name='edit'
+					type='font-awesome'
+					color='#517fa4'
+					reverse
+					onPress={() => { this.setModalVisible(true, false); }}
+				/>
 				<Overlay
 					isVisible={this.state.isVisible}
 					windowBackgroundColor='rgba(0, 0, 0, .5)'
@@ -128,14 +140,23 @@ class Floatwindow extends Component {
 			</View>
 		);
 	}
+	myTextInput = (item,boardType) => {
+		return (
+			<TextInput
+				style={[styles.input,styles['input'+item]]}
+				onChangeText={(value) => this.setState({[item]: value })}
+				keyboardType={boardType}
+			>{this.state[item]}</TextInput>
+		);
+	}
 	myButtonModal = (text, func) => {
 		return (
 			<View style={styles.viewModal}>
 				<TouchableOpacity
-					style={styles.myButtonModal}
+					style={[styles.myButtonModal, styles['button' + text]]}
 					onPress={func}
 				>
-					<Text style={styles.textModal}>{text}</Text>
+					<Text style={[styles.textModal, styles['text' + text]]}>{text}</Text>
 				</TouchableOpacity>
 			</View>
 		)
@@ -145,61 +166,51 @@ class Floatwindow extends Component {
 			return (<Picker.Item label={label} value={index} key={toString(index)} />)
 		});
 		return (
-			<View style={{ flexDirection: 'row' }}>
-				<Text style={styles.text}>{item}:</Text>
-				<Picker
-					style={styles.picker}
-					selectedValue={this.state[item]}
-					onValueChange={(value) => this.setState({ [item]: value })}>
-					{pickerItem}
-				</Picker>
-			</View>
-		)
-	}
-	myTextInput = (item, boardType) => {//
-		return (
-			<View style={{ flexDirection: 'row' }}>
-				<Text style={styles.text}>{item}:</Text>
-				<TextInput
-					style={[styles.input, styles[item]]}
-					onChangeText={(value) => this.setState({ [item]: value })}
-					keyboardType={boardType}
-				>{this.state[item]}</TextInput>
-			</View>
+			<Picker
+				style={[styles.picker, styles[item + 'Picker']]}
+				selectedValue={this.state[item]}
+				onValueChange={(value) => this.setState({ [item]: value })}>
+				{pickerItem}
+			</Picker>
 		)
 	}
 	clearData() {
 		this.setState({
-			amount: '',
+			Amount: '',
 			method: 0,
 			usage: 0,
 			note: '',
-			cycleCount: null,
+			cycle: null,
 			cycleUnit: 0,
 			date: (this.getDatestr(new Date())),
 		});
 	}
-	submitData(next) {
-		let str='';
-		if(this.state.amount==''){
-			Alert.alert("weitianxi1");
-			return;
-		}	
-		if ((this.state.cycleCount == '' || this.state.cycleCount == null) && this.state.cyclely == true){
-			Alert.alert("weitianxie2");
+	async submitData(next) {
+		let str = '';
+		if (this.state.Amount == '')
+			str = 'Please enter Amount';
+		else if (this.state.Amount == '0')
+			str = 'Amount can\'t be zero';
+		else if ((this.state.cycle == '' || this.state.cycle == null) && this.state.cyclely == true)
+			str = 'Please enter cycle';
+		else if (this.state.cycle == '0' && this.state.cyclely == true)
+			str = 'Cycle can\'t be zero';
+		if (str != '') {
+			ToastAndroid.showWithGravity(str, ToastAndroid.LONG, ToastAndroid.CENTER);
 			return;
 		}
-		db.in(TableBasicAccounting.name).insert({
-			amount: this.state.amount,
-			method: this.state.method,
-			note: this.state.note,
-			usage: this.state.usage,
-			cycleCount: this.state.cycleCount,
+		await db.in(TableBasicAccounting.name).insert({
+			Amount: this.state.Amount,
+			method: this.state.Method,
+			note: this.state.Note,
+			usage: this.state.Usage,
+			cycleCount: this.state.cycle,
 			cycleUnit: this.state.cycleUnit,
 			firstTime: this.state.date,
 			nextTriggerTime: this.state.date,
 		});
 		this.clearData();
+		ToastAndroid.showWithGravity('Submit success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
 		if (!next) this.setModalVisible(false, false);
 	}
 	getDatestr = (date) => {

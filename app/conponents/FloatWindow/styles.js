@@ -1,4 +1,5 @@
 import { Dimensions, StyleSheet } from 'react-native';
+import ThemeConfig from '../../config/ThemeConfig'
 
 windowHeight = Dimensions.get('window').height;
 windowWidth = Dimensions.get('window').width;
@@ -12,32 +13,13 @@ const styles = StyleSheet.create({
         width: 50,
         height: 120,
     },
-    buttonCycle: {
-        backgroundColor: 'black',
-        borderColor: 'black',
-        borderWidth: 2,
-        borderRadius: 25,
-        width: 50,
-        height: 50,
-    },
-    buttonUncycle: {
-        backgroundColor: 'black',
-        borderColor: 'black',
-        borderWidth: 2,
-        borderRadius: 25,
-        marginTop: 20,
-        width: 50,
-        height: 50,
-    },
     picker: {
         width: 200,
-        marginTop: 10,
     },
-    pickerCycleCount:{
+    cycleUnitPicker: {
         width: 100,
-        marginTop: 10,
-        borderWidth:1,
-        borderColor:'black',
+        borderWidth: 1,
+        borderColor: 'black',
     },
     text: {
         color: 'black',
@@ -50,36 +32,51 @@ const styles = StyleSheet.create({
         fontSize: 25,
         borderBottomWidth: 1,
         borderColor: 'black',
-        width: 200,
-    },
-    amount: {
+        flex:1,
         color: 'black',
     },
-    method: {
-        color: 'black',
-    },
-    usage: {
-        color: 'black',
-    },
-    notes: {
-        color: 'black',
-    },
-    cycleCount:{
-        width:100,
+    inputcycle:{
+        borderBottomWidth: 1,
+        borderColor: 'black',
+        textAlign: 'right',
     },
     viewModal: {
         flex: 1,
     },
     myButtonModal: {
         marginTop: 15,
-        backgroundColor: 'skyblue',
         width: "85%",
     },
+    buttonClear:{
+        backgroundColor:ThemeConfig.themeWeakColor,
+    },
+    buttonSubmit:{
+        backgroundColor: ThemeConfig.themeMainColor,
+    },
+    buttonNext:{
+        backgroundColor: ThemeConfig.themeMainColor,
+    },
     textModal: {
-        color: 'black',
+        color: 'white',
         fontSize: 25,
         textAlign: 'center',
     },
+    textClear: {
+        color: ThemeConfig.themeMainColor,
+    },
+    textSubmit: {
+        color: 'white',
+    },
+    textNext: {
+        color: 'white',
+    },
+    money: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        fontSize: 25,
+        marginTop: 10,
+        color:'black',
+    }
 });
 
 export default styles;
