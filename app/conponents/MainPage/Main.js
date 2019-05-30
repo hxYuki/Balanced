@@ -111,12 +111,6 @@ export default class Main extends Component<Props>{
     
   }
   async refreshAfterSubmitted(){
-    await this.setState({
-      accounts: this.state.accounts.clear(),
-      income:0,
-      expense:0,
-      deposit:0
-    });
     await this.queryListData();
     await this.queryStatData();
     this.refs['section'].props.refreshing=false
@@ -154,7 +148,15 @@ export default class Main extends Component<Props>{
           // onEndReachedThreshold={}
           onEndReached={()=>{this.queryListData()}}
           refreshing={false}
-          onRefresh={()=>{this.refs['section'].props.refreshing=true;this.refreshAfterSubmitted()}}
+          onRefresh={()=>{
+            this.refs['section'].props.refreshing=true;
+            this.setState({
+              accounts: this.state.accounts.clear(),
+              income: 0,
+              expense: 0,
+              deposit: 0
+            }, ()=>{this.refreshAfterSubmitted()});
+          }}
         />
 
         {/* <Floatwindow /> */}

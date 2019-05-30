@@ -12,6 +12,7 @@ import moment from 'moment';
 import './extends/Number';
 
 import Main from './conponents/MainPage/Main';
+import Drawer from './conponents/Drawer/Drawer';
 import Sqlite from './lib/sqlite';
 import { DatabaseConfig, TableBasicAccounting, TableTags, DBVersion, BaseTableFieldTitle } from './config/DatabaseConfig';
 
@@ -190,7 +191,7 @@ export default class App extends Component<Props> {
     // }).then(()=>{
     //   popinSomeData();
     // })
-    updateCycles();
+    // updateCycles();
   }
   componentDidMount(){
     // clearDB();
@@ -199,7 +200,7 @@ export default class App extends Component<Props> {
   render() {
     return (// TODO : Replace this with Drawer component
       <View>
-        <Main openDrawer={()=>{}} db={db} />
+        <Main openDrawer={()=>{console.log('open drawer');}} db={db} />
 
       </View>
     );

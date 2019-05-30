@@ -5,7 +5,7 @@ import ThemeConfig from '../../config/ThemeConfig';
 
 const ListHeader = ({income, expense, deposit}) => (
   <View style={ListHeaderStyle.Container}>
-    <Text h4 style={ListHeaderStyle.ListTextCommon}>This week: {(income + expense).formatCurrency({symbol:'￥'})}</Text>
+    <Text h4 style={ListHeaderStyle.ListTextCommon}>This month: {(income + expense).formatCurrency({symbol:'￥'})}</Text>
     <View style={ListHeaderStyle.ListTextContainer}>
       <View style={ListHeaderStyle.ListInnerTextContainer}>
         <Text style={ListHeaderStyle.ListTextCommon}>Income: </Text>
