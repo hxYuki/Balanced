@@ -6,7 +6,7 @@ export default class Drawer extends Component{
   constructor(props){
     super(props);
     this.state={TotalDeposit:0,MainPageFlag:true};
-    this.DrawerIn=this.DrawerIn.bind(this);
+    this.DrawerIn=this.DrawerIn.bind(this)
   }
 
   DrawerIn=()=>{
