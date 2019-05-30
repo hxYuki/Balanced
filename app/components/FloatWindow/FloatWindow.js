@@ -212,7 +212,7 @@ class Floatwindow extends Component<Props>{
 			method: this.state.Method,
 			note: this.state.Note,
 			usage: this.state.Usage,
-			cycleCount: this.state.cycle,
+			cycleCount: (this.state.cyclely?this.state.cycle:null),
 			cycleUnit: this.state.cycleUnit,
 			firstTime: this.state.date,
 			nextTriggerTime: this.state.date,
