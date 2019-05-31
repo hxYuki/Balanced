@@ -2,7 +2,13 @@ import React, {Component} from 'react';
 import {View,DrawerLayoutAndroid,StyleSheet,Text,TouchableOpacity} from 'react-native';
 import { Icon } from 'react-native-elements'
 
-export default class Drawer extends Component{
+import Main from '../MainPage/Main';
+import Sqlite from '../../lib/sqlite';
+
+type Props={
+  db:Sqlite
+}
+export default class Drawer extends Component<Props>{
   constructor(props){
     super(props);
     this.state={TotalDeposit:0,MainPageFlag:true};
@@ -12,7 +18,7 @@ export default class Drawer extends Component{
   DrawerIn=()=>{
     return(
     <View style={{flex:1,justifyContent:'flex-start'}}>
-      <View style={styles.NavigaterHead}><Text style={{fontSize:20,color:'white',fontWeight:'700'}}>Total Deposit : ￥</Text></View>
+      <View style={styles.NavigaterHead}><Text style={{fontSize:20,color:'white',fontWeight:'700'}}>Total Deposit: ￥{this.state.TotalDeposit}</Text></View>
       <TouchableOpacity style={styles.NavigateItem} onPress={()=>this._ChangeMainPage()}>
         <Icon name = 'pie-chart' type = 'material' size={35} color='grey' />
         <Text style={{fontSize:20,marginLeft:20,fontWeight:'700'}}>{this.state.MainPageFlag==true?("Statistics"):("MainPage")}</Text>
@@ -59,10 +65,7 @@ export default class Drawer extends Component{
         drawerPosition={DrawerLayoutAndroid.positions.Left}
         renderNavigationView={this.DrawerIn}
         >
-        <View style={styles.container}>
-          <Text style={styles.welcome}>Welcome to React Native!</Text>
-          <Text style={styles.instructions}>To get started, edit App.js</Text>
-        </View>
+        <Main db={this.props.db} setTotalDeposit={(totalDeposit)=>{this.setState({TotalDeposit:totalDeposit})}} />
       </DrawerLayoutAndroid>
     );
   }

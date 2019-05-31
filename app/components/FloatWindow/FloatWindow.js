@@ -218,7 +218,7 @@ class Floatwindow extends Component<Props>{
 			nextTriggerTime: this.state.date,
 		});
 		this.clearData();
-		this.props.refresh;
+		this.props.refresh();
 		ToastAndroid.showWithGravity('Submit success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
 		if (!next) this.setModalVisible(false, false);
 	}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions} from 'react-native';
+import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {List} from 'immutable';
@@ -19,7 +19,6 @@ const countListData = (list: List) => (list.reduce((acc,v)=>(acc+v.data.length),
 type OpenDrawerCallback = ()=>{}
 type SetTotalDepositCallback = (totalDeposit:Number)=>{}
 type Props = {
-<<<<<<< HEAD
   openDrawerCB: OpenDrawerCallback,
   setTotalDeposit: SetTotalDepositCallback,
   db: Sqlite
@@ -180,11 +179,6 @@ const checkThings = async ()=>{
         ToastAndroid.show('Up-to-date Check Failed.',ToastAndroid.SHORT);
     }
   });
-=======
-  openDrawer: OpenDrawerCallback,
-  setTotalDeposit?: SetTotalDepositCallback,
-  db: Sqlite
->>>>>>> 701d8b765ab7e2ba97478d6d72a38ec759911681
 }
 
 var db:Sqlite;
@@ -198,13 +192,10 @@ export default class Main extends Component<Props>{
       deposit:0
     };
     db=this.props.db;
-<<<<<<< HEAD
 
     checkThings().then(()=>{
       this.refreshAfterSubmitted();
     })
-=======
->>>>>>> 701d8b765ab7e2ba97478d6d72a38ec759911681
   }
   componentDidMount(){
     this.queryListData();
@@ -271,7 +262,6 @@ export default class Main extends Component<Props>{
       deposit:deposit?deposit[0]['total']:0
     })
 
-<<<<<<< HEAD
     {
       let totalDeposit = await db.in(TableBasicAccounting.name)
         .field("method, usage, sum(amount) as total")
@@ -281,21 +271,6 @@ export default class Main extends Component<Props>{
       this.props.setTotalDeposit(parseInt(totalDeposit[0]['total']).formatCurrency({symbol:''}))
     }
     
-=======
-    // if(this.props.setTotalDeposit!==undefined){
-    //   let totalDeposit = await db.in(TableBasicAccounting.name)
-    //     .field("method, usage, sum(amount) as total")
-    //     .where('usage==6 or method==4')
-    //     .select();
-    //   this.props.setTotalDeposit(totalDeposit?totalDeposit[0]['total']:0)
-    // }
-    
-  }
-  async refreshAfterSubmitted(){
-    await this.queryListData();
-    await this.queryStatData();
-    this.refs['section'].props.refreshing=false
->>>>>>> 701d8b765ab7e2ba97478d6d72a38ec759911681
   }
   async refreshAfterSubmitted(){
     await this.queryListData();
@@ -346,7 +321,15 @@ export default class Main extends Component<Props>{
           }}
         />
 
-        {/* <Floatwindow db={db} refresh /> */}
+        <Floatwindow db={db} refresh={()=>{
+          this.refs['section'].props.refreshing=true;
+          this.setState({
+            accounts: this.state.accounts.clear(),
+            income: 0,
+            expense: 0,
+            deposit: 0
+          }, ()=>{this.refreshAfterSubmitted()});
+        }} />
       </View>
     );
   }
