@@ -52,10 +52,6 @@ class Floatwindow extends Component<Props>{
 					<Text style={styles.text}>Usage:</Text>
 					{this.myPicker('Usage', BaseTableFieldTitle.usage)}
 				</View>
-				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
-					<Text style={styles.text}>Note:</Text>
-					{this.myTextInput('Note', 'default')}
-				</View>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>date:</Text>
 					<DatePicker
@@ -64,8 +60,8 @@ class Floatwindow extends Component<Props>{
 						mode="date"
 						placeholder={this.state.date}
 						format="YYYY-MM-DD"
-						minDate={(moment().add(-2,'Years').format("YYYY")) + "-01-01"}
-						maxDate={(moment().add(2,'Years').format("YYYY")) + "-12-31"}
+						minDate={(moment().add(-2, 'Years').format("YYYY")) + "-01-01"}
+						maxDate={(moment().add(2, 'Years').format("YYYY")) + "-12-31"}
 						androidMode="spinner"
 						customStyles={{
 							dateIcon: {
@@ -78,7 +74,7 @@ class Floatwindow extends Component<Props>{
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date }); console.log(moment().add(-2, 'W').format("YYYY-MM-DD"))}}
+						onDateChange={(date) => { this.setState({ date: date }); console.log(moment().add(-2, 'W').format("YYYY-MM-DD")) }}
 					/>
 				</View>
 			</View>
@@ -86,10 +82,16 @@ class Floatwindow extends Component<Props>{
 	}
 	uncyclelyPart() {
 		return (
-			<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
-				{this.myButtonModal('Clear', () => this.clearData())}
-				{this.myButtonModal('Submit', () => this.submitData(false))}
-				{this.myButtonModal('Next', () => this.submitData(true))}
+			<View>
+				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+					<Text style={styles.text}>Note:</Text>
+					{this.myTextInput('Note', 'default')}
+				</View>
+				<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
+					{this.myButtonModal('Clear', () => this.clearData())}
+					{this.myButtonModal('Submit', () => this.submitData(false))}
+					{this.myButtonModal('Next', () => this.submitData(true))}
+				</View>
 			</View>
 		);
 	}
@@ -100,6 +102,10 @@ class Floatwindow extends Component<Props>{
 					<Text style={styles.text}>cycle:</Text>
 					{this.myTextInput('cycle', 'numeric')}
 					{this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+					<Text style={styles.text}>Note:</Text>
+					{this.myTextInput('Note', 'default')}
 				</View>
 				<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
 					{this.myButtonModal('Clear', () => this.clearData())}
@@ -212,7 +218,7 @@ class Floatwindow extends Component<Props>{
 			method: this.state.Method,
 			note: this.state.Note,
 			usage: this.state.Usage,
-			cycleCount: (this.state.cyclely?this.state.cycle:null),
+			cycleCount: (this.state.cyclely ? this.state.cycle : null),
 			cycleUnit: this.state.cycleUnit,
 			firstTime: this.state.date,
 			nextTriggerTime: this.state.date,
