@@ -130,12 +130,12 @@ export default class Sqlite {
         this._tableLimit = limit;
         return this;
     }
-    orderedBy(...columnsAndOrder) {
-        columnsAndOrder = columnsAndOrder[0] instanceof Array ? columnsAndOrder[0] : columnsAndOrder;
-        const reg = /asc|ASC|desc|DESC/;
-        if (columnsAndOrder[columnsAndOrder.length - 1].match(reg)) {
-            this._tableOrderWay = columnsAndOrder.splice(columnsAndOrder.length - 1, 1)[0];
-        }
+    orderedBy(columnsAndOrder:string) {
+        // columnsAndOrder = columnsAndOrder[0] instanceof Array ? columnsAndOrder[0] : columnsAndOrder;
+        // const reg = /asc|ASC|desc|DESC/;
+        // if (columnsAndOrder[columnsAndOrder.length - 1].match(reg)) {
+        //     this._tableOrderWay = columnsAndOrder.splice(columnsAndOrder.length - 1, 1)[0];
+        // }
         this._tableOrderBy = columnsAndOrder;
         return this;
     }
@@ -244,7 +244,7 @@ export default class Sqlite {
 
         const limit = this._tableLimit === 0 ? '' : ` LIMIT ${this._tableLimit}`;
         const offset = this._tableOffset === 0 ? '' : ` OFFSET ${this._tableOffset}`;
-        const orderBy = !this._tableOrderBy.toString() ? '' : ` ORDER BY ${this._tableOrderBy.join(',')} ${this._tableOrderWay}`;
+        const orderBy = !this._tableOrderBy.toString() ? '' : ` ORDER BY ${this._tableOrderBy}`;
         const groupBy = !this._tableGroupBy.toString() ? '' : ` GROUP BY ${this._tableGroupBy.join(',')}`;
 
         const sql = `SELECT ${this._tableField.join(',')} FROM ${this._tableName} WHERE ${this._tableWhere.join(' AND ')}${groupBy}${orderBy}${limit}${offset};`;
