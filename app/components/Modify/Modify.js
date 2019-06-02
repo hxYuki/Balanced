@@ -13,15 +13,17 @@ type Props = {
     db: Sqlite,
     data: {},
     refresh: () => {},
+    closeModify: () => {},
+    modifying:Boolean,
 };
 let db;
 class Modify extends Component<Props>{
     constructor(props) {
         super(props);
         this.state = {
-            isVisible: false,
+            isVisible:this.props.modifying,
             cyclely: this.props.data.cycleCount != null,
-            Amount: this.props.data.amount,
+            Amount: this.props.data.amount.toString(),
             Method: this.props.data.method,
             Usage: this.props.data.usage,
             Note: this.props.data.note,
@@ -33,9 +35,7 @@ class Modify extends Component<Props>{
     }
     async componentWillMount() {
         await db.createTable(TableBasicAccounting);
-    }
-    setModalVisible(visible) {
-        this.setState({ isVisible: visible });
+        // console.log('data=1',this.props.data,this.props.modifying);
     }
     inputPart() {
         return (
@@ -47,19 +47,17 @@ class Modify extends Component<Props>{
                         color={ThemeConfig.themeMainColor}
                         size={19}
                         reverse
-                        onPress={() => this.setState({ isVisible: false })}
+                        onPress={() => { this.props.closeModify() }}
                     />
-                    <Text style={{ color: '#fff' }}>Modify</Text>
-                    <View style={{ marginLeft:'63%'}}>
-                        <Icon
-                            name='delete-forever'
-                            type='material'
-                            color={ThemeConfig.themeMainColor}
-                            size={19}
-                            reverse
-                            onPress={() => this.deleteData({ isVisible: false })}
-                        />
-                    </View>
+                    <Text style={{ color: '#fff',flex:1 }}>Modify</Text>
+                    <Icon
+                        name='delete-forever'
+                        type='material'
+                        color={ThemeConfig.themeMainColor}
+                        size={19}
+                        reverse
+                        onPress={() => this.deleteData()}
+                    />
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 100, paddingBottom: 50 }}>
                     <KeyboardAwareScrollView>
@@ -126,19 +124,12 @@ class Modify extends Component<Props>{
     render() {
         return (
             <View style={styles.container}>
-                <Icon
-                    name='edit'
-                    type='font-awesome'
-                    color={ThemeConfig.themeMainColor}
-                    reverse
-                    onPress={() => this.setState({ isVisible: true })}
-                />
                 <Overlay
                     overlayStyle={{ padding: 0 }}
-                    isVisible={this.state.isVisible}
+                    isVisible={this.props.modifying}
                     overlayBackgroundColor='white'
                     fullScreen={true}
-                    onBackdropPress={() => this.setState({ isVisible: false })}
+                    onBackdropPress={()=>{this.props.closeModify()}}
                 >
                     {this.inputPart()}
                 </Overlay>
@@ -179,22 +170,11 @@ class Modify extends Component<Props>{
             </Picker>
         )
     }
-    clearData() {
-        this.setState({
-            Amount: '',
-            Method: 0,
-            Usage: 0,
-            Note: '',
-            cycle: null,
-            cycleUnit: 0,
-            date: (moment().format("YYYY-MM-DD")),
-        });
-    }
     async deleteData() {
         await db.in(TableBasicAccounting.name).where(`id==${this.props.data.id}`).delete();
         this.props.refresh();
-        ToastAndroid.showWithGravity('Submit success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
-        this.setState({ isVisible: false });
+        ToastAndroid.showWithGravity('Delete success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
+        this.props.closeModify();
     }
     async updateData() {
         let str = '';
@@ -216,20 +196,29 @@ class Modify extends Component<Props>{
             ToastAndroid.showWithGravity(str, ToastAndroid.LONG, ToastAndroid.CENTER);
             return;
         }
+        // console.log('id=',this.props.data.id);
+        // console.log('amount:', Number(this.state.Amount),
+        //     'method:', this.state.Method,
+        //     'note:', this.state.Note,
+        //     'usage:', this.state.Usage,
+        //     'cycleCount:', (this.state.cyclely ? this.state.cycle : null),
+        //     'cycleUnit:', this.state.cycleUnit,
+        //     'firstTime:', this.state.date,
+        //    'nextTriggerTime:',this.state.date,
+        // );
         await db.in(TableBasicAccounting.name).where(`id==${this.props.data.id}`).update({
-            amount: this.state.Amount,
-            method: this.state.Method,
-            note: this.state.Note,
-            usage: this.state.Usage,
-            cycleCount: (this.state.cyclely ? this.state.cycle : null),
-            cycleUnit: this.state.cycleUnit,
-            firstTime: this.state.date,
-            nextTriggerTime: this.state.date,
+            'amount': this.state.Amount,
+            'method': this.state.Method,
+            'note': this.state.Note,
+            'usage': this.state.Usage,
+            'cycleCount': (this.state.cyclely ? this.state.cycle : null),
+            'cycleUnit': this.state.cycleUnit,
+            'firstTime': this.state.date,
+            'nextTriggerTime': this.state.date,
         });
-        this.clearData();
         this.props.refresh();
-        ToastAndroid.showWithGravity('Submit success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
-        this.setState({ isVisible: false });
+        ToastAndroid.showWithGravity('Modify success!', ToastAndroid.SHORT, ToastAndroid.CENTER);
+        this.props.closeModify();
     }
 }
 export default Modify;

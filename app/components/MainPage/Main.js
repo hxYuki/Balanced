@@ -9,6 +9,7 @@ import ThemeConfig from '../../config/ThemeConfig';
 import Sqlite from '../../lib/sqlite';
 import {TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseConfig';
 import Floatwindow from '../FloatWindow/FloatWindow';
+import Modify from "../Modify/Modify";
 
 
 const height = Dimensions.get('window').height;
@@ -324,8 +325,14 @@ export default class Main extends Component<Props>{
           refreshing={false}
           onRefresh={()=>{this.refresh();}}
         />
-        
-        <Floatwindow db={db} refresh={()=>{this.refresh();}} />
+        {this.state.modifying&&<Modify 
+          db={db} 
+          data={this.state.modified}
+          refresh={() => { this.refresh();}}
+          modifying={this.state.modifying}
+          closeModify={()=>{this.setState({modifying:false})}}
+        />}
+        <Floatwindow db={db} refresh={() => {updateCycles();this.refresh(); }} />
       </View>
     );
   }
