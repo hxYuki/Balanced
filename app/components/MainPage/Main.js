@@ -320,7 +320,7 @@ export default class Main extends Component<Props>{
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
               rightSubtitle={moment(item.firstTime).format("YYYY-MM-D")}
-              onLongPress={()=>{this.setState({modified:item})}}
+              onLongPress={()=>{this.setState({modified:item,modifying:true})}}
             />)}
           keyExtractor={(item,index)=>index.toString()}
           // onEndReachedThreshold={}
