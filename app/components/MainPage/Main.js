@@ -189,7 +189,9 @@ export default class Main extends Component<Props>{
       accounts:List([]),
       income:0,
       expense:0,
-      deposit:0
+      deposit:0,
+      modifying:false,
+      modified:{}
     };
     db=this.props.db;
 
@@ -281,6 +283,15 @@ export default class Main extends Component<Props>{
     await this.queryStatData();
     this.refs['section'].props.refreshing=false
   }
+  refresh(){
+    this.refs['section'].props.refreshing=true;
+    this.setState({
+      accounts: this.state.accounts.clear(),
+      income: 0,
+      expense: 0,
+      deposit: 0
+    }, ()=>{this.refreshAfterSubmitted()});
+  }
   render(){
     return (
       <View style={{height:height}}>
@@ -309,31 +320,16 @@ export default class Main extends Component<Props>{
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
               rightSubtitle={moment(item.firstTime).format("YYYY-MM-D")}
+              onLongPress={()=>{this.setState({modified:item})}}
             />)}
           keyExtractor={(item,index)=>index.toString()}
           // onEndReachedThreshold={}
           onEndReached={()=>{this.queryListData()}}
           refreshing={false}
-          onRefresh={()=>{
-            this.refs['section'].props.refreshing=true;
-            this.setState({
-              accounts: this.state.accounts.clear(),
-              income: 0,
-              expense: 0,
-              deposit: 0
-            }, ()=>{this.refreshAfterSubmitted()});
-          }}
+          onRefresh={()=>{this.refresh();}}
         />
-
-        <Floatwindow db={db} refresh={()=>{
-          this.refs['section'].props.refreshing=true;
-          this.setState({
-            accounts: this.state.accounts.clear(),
-            income: 0,
-            expense: 0,
-            deposit: 0
-          }, ()=>{this.refreshAfterSubmitted()});
-        }} />
+        
+        <Floatwindow db={db} refresh={()=>{this.refresh();}} />
       </View>
     );
   }

@@ -21,25 +21,13 @@ export default class App extends Component<Props> {
   constructor(props){
     super(props);
     
-    // console.log(DatabaseConfig,{name:'Balanced'});
-    
-    // checkThings().then(()=>{
-    //   // popinSomeData();
-    // })
-    // clearStorage();
-    // clearDB().then(()=>{
-    //   return checkThings();
-    // }).then(()=>{
-    //   popinSomeData();
-    // })
-    // updateCycles();
   }
   componentDidMount(){
     // clearDB();
 
   }
   render() {
-    return (// TODO : Replace this with Drawer component
+    return (
       <Drawer db={db} />
     );
   }
