@@ -280,6 +280,8 @@ export default class Sqlite {
      * @returns {Promise<false> | Promise<Number>} failed | affected rows' count
      */
     async update(updated_data) {
+        // console.log('ddddd:',updated_data);
+        
         if (!this._tableWhere.toString()) {
             whenFailed("update", "condition cannot be null");
             return false;
@@ -287,6 +289,8 @@ export default class Sqlite {
         let fields = [];
         let values = [];
         for (let k in updated_data) {
+            console.log('eeee',k,updated_data[k]);
+            
             fields.push(k);
             values.push(updated_data[k]);
         }
@@ -295,7 +299,7 @@ export default class Sqlite {
 
         await this.db;
         try {
-            const result = await this.db.executeSql(sql).then(res => {
+            const result = await this.db.executeSql(sql,values).then(res => {
                 whenSuccess("update");
 
                 return res[0].rowsAffected;

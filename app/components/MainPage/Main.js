@@ -42,15 +42,10 @@ const checkUpdated = async () => {
   return 'updated';
 }
 const updateCycles = async () => {
-  // const map = {
-  //   'Year':'y',
-  //   'Month':'m',
-  //   ''
-  // }
   try{
     console.log('updating');
     
-    let cycles = await db.in(TableBasicAccounting.name).field('*').where('cycleCount is not null AND nextTriggerTime==date("now")').select();
+    let cycles = await db.in(TableBasicAccounting.name).field('*').where('cycleCount is not null AND nextTriggerTime<=date("now")').select();
     // console.log('toUpdate',cycles);
     
     cycles.forEach(v=>{
@@ -234,7 +229,7 @@ export default class Main extends Component<Props>{
       .limit(10,countListData(this.state.accounts))
       .orderedBy('firstTime desc, id desc')
       .select();
-    console.log(results);
+    // console.log(results);
     
     if(!results)
     {
@@ -283,7 +278,8 @@ export default class Main extends Component<Props>{
     await this.queryStatData();
     this.refs['section'].props.refreshing=false
   }
-  refresh(){
+  async refresh(){
+    await updateCycles();
     this.refs['section'].props.refreshing=true;
     this.setState({
       accounts: this.state.accounts.clear(),

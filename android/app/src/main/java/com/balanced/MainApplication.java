@@ -3,12 +3,14 @@ package com.balanced;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.sha256lib.Sha256Package;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import org.pgsqlite.SQLitePluginPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +26,10 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
+          new RNDeviceInfo(),
           new MainReactPackage(),
-            new VectorIconsPackage(),
+            new Sha256Package(),
+          new VectorIconsPackage(),
           new SQLitePluginPackage()
       );
     }
