@@ -227,8 +227,12 @@ export default class Main extends Component<Props>{
   async queryListData(){
     console.log('querying');
     
-    let results = await db.in(TableBasicAccounting.name).limit(10,countListData(this.state.accounts)).orderedBy('id','desc').select();
-    // console.log(results);
+    let results = await db.in(TableBasicAccounting.name)
+      .field('*')
+      .limit(10,countListData(this.state.accounts))
+      .orderedBy('firstTime desc, id desc')
+      .select();
+    console.log(results);
     
     if(!results)
     {
