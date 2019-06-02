@@ -202,7 +202,9 @@ class Floatwindow extends Component<Props>{
 			'cycleCount': (this.state.cyclely ? this.state.cycle : null),
 			'cycleUnit': this.state.cycleUnit,
 			'firstTime': this.state.date,
-			'nextTriggerTime': this.state.date,
+			'nextTriggerTime': (this.state.cyclely ? 
+				moment(this.state.date).add(this.state.cycle, BaseTableFieldTitle.cycleUnit[this.state.cycleUnit]).format("YYYY-MM-DD")
+				:this.state.date),
 		});
 		this.clearData();
 		this.props.refresh();
