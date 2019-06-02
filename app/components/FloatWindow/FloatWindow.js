@@ -74,10 +74,10 @@ class Floatwindow extends Component<Props>{
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date });}}
+						onDateChange={(date) => { this.setState({ date: date }); }}
 					/>
 				</View>
-				{this.state.cyclely ? this.cyclelyPart():()=>{return;}}
+				{this.state.cyclely && this.cyclelyPart()}
 				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
 					<Text style={styles.text}>Note:</Text>
 					{this.myTextInput('Note', 'default')}
@@ -195,14 +195,14 @@ class Floatwindow extends Component<Props>{
 			return;
 		}
 		await db.in(TableBasicAccounting.name).insert({
-			amount: this.state.Amount,
-			method: this.state.Method,
-			note: this.state.Note,
-			usage: this.state.Usage,
-			cycleCount: (this.state.cyclely ? this.state.cycle : null),
-			cycleUnit: this.state.cycleUnit,
-			firstTime: this.state.date,
-			nextTriggerTime: this.state.date,
+			'amount': this.state.Amount,
+			'method': this.state.Method,
+			'note': this.state.Note,
+			'usage': this.state.Usage,
+			'cycleCount': (this.state.cyclely ? this.state.cycle : null),
+			'cycleUnit': this.state.cycleUnit,
+			'firstTime': this.state.date,
+			'nextTriggerTime': this.state.date,
 		});
 		this.clearData();
 		this.props.refresh();
