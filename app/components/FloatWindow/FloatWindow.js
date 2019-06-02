@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 import { Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
@@ -74,15 +74,10 @@ class Floatwindow extends Component<Props>{
 								marginLeft: 36
 							}
 						}}
-						onDateChange={(date) => { this.setState({ date: date }); console.log(moment().add(-2, 'W').format("YYYY-MM-DD")) }}
+						onDateChange={(date) => { this.setState({ date: date });}}
 					/>
 				</View>
-			</View>
-		);
-	}
-	uncyclelyPart() {
-		return (
-			<View>
+				{this.state.cyclely ? this.cyclelyPart():()=>{return;}}
 				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
 					<Text style={styles.text}>Note:</Text>
 					{this.myTextInput('Note', 'default')}
@@ -97,21 +92,10 @@ class Floatwindow extends Component<Props>{
 	}
 	cyclelyPart() {
 		return (
-			<View>
-				<View style={{ flexDirection: 'row', alignItems: 'center', }}>
-					<Text style={styles.text}>cycle:</Text>
-					{this.myTextInput('cycle', 'numeric')}
-					{this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
-				</View>
-				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
-					<Text style={styles.text}>Note:</Text>
-					{this.myTextInput('Note', 'default')}
-				</View>
-				<View style={{ flex: 0, flexDirection: 'row', height: 50, }}>
-					{this.myButtonModal('Clear', () => this.clearData())}
-					{this.myButtonModal('Submit', () => this.submitData(false))}
-					{this.myButtonModal('Next', () => this.submitData(true))}
-				</View>
+			<View style={{ flexDirection: 'row', alignItems: 'center', }}>
+				<Text style={styles.text}>cycle:</Text>
+				{this.myTextInput('cycle', 'numeric')}
+				{this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
 			</View>
 		);
 	}
@@ -123,14 +107,14 @@ class Floatwindow extends Component<Props>{
 					type='font-awesome'
 					color={ThemeConfig.themeMainColor}
 					reverse
-					onPress={() => { this.setModalVisible(true, true); }}
+					onPress={() => { this.setModalVisible(true, false); }}
 				/>
 				<Icon
 					name='plus-circle'
 					type='font-awesome'
 					color={ThemeConfig.themeMainColor}
 					reverse
-					onPress={() => { this.setModalVisible(true, false); }}
+					onPress={() => { this.setModalVisible(true, true); }}
 				/>
 				<Overlay
 					isVisible={this.state.isVisible}
@@ -140,10 +124,7 @@ class Floatwindow extends Component<Props>{
 					height='auto'
 					onBackdropPress={() => this.setModalVisible(false, false)}
 				>
-					<View>
-						{this.inputPart()}
-						{this.state.cyclely ? this.cyclelyPart() : this.uncyclelyPart()}
-					</View>
+					{this.inputPart()}
 				</Overlay>
 			</View>
 		);
