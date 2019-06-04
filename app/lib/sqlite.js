@@ -289,7 +289,7 @@ export default class Sqlite {
         let fields = [];
         let values = [];
         for (let k in updated_data) {
-            console.log('eeee',k,updated_data[k]);
+            // console.log('eeee',k,updated_data[k]);
             
             fields.push(k);
             values.push(updated_data[k]);

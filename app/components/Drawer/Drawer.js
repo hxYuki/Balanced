@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements'
 
 import Main from '../MainPage/Main';
 import UpDownModal from './Up-Download';
+import CheckIdModal from './IdCheck';
 import Sqlite from '../../lib/sqlite';
 
 type Props = {
@@ -12,7 +13,13 @@ type Props = {
 export default class Drawer extends Component<Props>{
   constructor(props) {
     super(props);
-    this.state = { TotalDeposit: 0, ShowPageFlag:'MainPage', showingOverlay:'none' };
+    this.state = { 
+      TotalDeposit: 0,
+      ShowPageFlag: 'MainPage',
+      showingOverlay: 'none',
+      checkingId:false,
+      refresh:null
+    };
     this.DrawerIn = this.DrawerIn.bind(this);
   }
 
@@ -62,16 +69,30 @@ export default class Drawer extends Component<Props>{
             </TouchableOpacity>
           )
         }
+        <TouchableOpacity style={styles.NavigateItem}>{/* TODO: Link Cycles page */}
+          <Icon name='autorenew' type='material' size={35} color='grey' />
+          <Text style={styles.drawerItemText}>Cycles</Text>
+          <View style={styles.right_arrow}>
+            <Icon name='chevron-right' type='material' size={35} color='grey' />
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'upload'})}}>
           <Icon name='backup' type='material' size={35} color='grey' />
-          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Cloud Backup</Text>
+          <Text style={styles.drawerItemText}>Cloud Backup</Text>
           {/* <View style={styles.right_arrow}>
             <Icon name='chevron-right' type='material' size={35} color='grey' />
           </View> */}
         </TouchableOpacity>
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'download'})}}>
           <Icon name='cloud-download' type='material' size={35} color='grey' />
-          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Restore</Text>
+          <Text style={styles.drawerItemText}>Restore</Text>
+          {/* <View style={styles.right_arrow}>
+            <Icon name='chevron-right' type='material' size={35} color='grey' />
+          </View> */}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({checkingId:true})}} >
+          <Icon name='error-outline' type='material' size={35} color='grey' />
+          <Text style={styles.drawerItemText}>Check ID</Text>
           {/* <View style={styles.right_arrow}>
             <Icon name='chevron-right' type='material' size={35} color='grey' />
           </View> */}
@@ -115,8 +136,9 @@ export default class Drawer extends Component<Props>{
         drawerPosition={DrawerLayoutAndroid.positions.Left}
         renderNavigationView={this.DrawerIn}
       >
-        <UpDownModal showing={this.state.showingOverlay} handleBack={()=>{this.closeModal()}} db={this.props.db} />
-        <Main db={this.props.db} setTotalDeposit={(totalDeposit) => { this.setState({ TotalDeposit: totalDeposit }) }} openDrawerCB={()=>{this.openDrawer()}} />
+        <CheckIdModal isVisible={this.state.checkingId} closeModal={()=>{this.setState({checkingId:false})}} />
+        <UpDownModal showing={this.state.showingOverlay} handleBack={()=>{this.closeModal()}} db={this.props.db} refreshMain={this.state.refresh} />
+        <Main db={this.props.db} setTotalDeposit={(totalDeposit) => { this.setState({ TotalDeposit: totalDeposit }) }} openDrawerCB={()=>{this.openDrawer()}} exportRefresh={(ptr)=>{this.setState({refresh:ptr})}} />
       </DrawerLayoutAndroid>
     );
   }
@@ -154,4 +176,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 5,
   },
+  drawerItemText: {
+    fontSize: 17,
+    marginLeft: 20,
+    fontWeight: '400'
+  }
 });
