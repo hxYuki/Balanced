@@ -69,30 +69,44 @@ export default class Drawer extends Component<Props>{
             </TouchableOpacity>
           )
         }
-        <TouchableOpacity style={styles.NavigateItem}>{/* TODO: Link Cycles page */}
-          <Icon name='autorenew' type='material' size={35} color='grey' />
-          <Text style={styles.drawerItemText}>Cycles</Text>
-          <View style={styles.right_arrow}>
-            <Icon name='chevron-right' type='material' size={35} color='grey' />
-          </View>
-        </TouchableOpacity>
+        {
+          this.state.ShowPageFlag=='Cycles'?
+          (
+            <TouchableOpacity style={[styles.NavigateItem,{backgroundColor:'yellow'}]}>{/* TODO: Link Cycles page */}
+              <Icon name='autorenew' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Cycles</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          ):
+          (
+            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(3)}>{/* TODO: Link Cycles page */}
+              <Icon name='autorenew' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Cycles</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          )
+        }
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'upload'})}}>
           <Icon name='backup' type='material' size={35} color='grey' />
-          <Text style={styles.drawerItemText}>Cloud Backup</Text>
+          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Cloud Backup</Text>
           {/* <View style={styles.right_arrow}>
             <Icon name='chevron-right' type='material' size={35} color='grey' />
           </View> */}
         </TouchableOpacity>
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'download'})}}>
           <Icon name='cloud-download' type='material' size={35} color='grey' />
-          <Text style={styles.drawerItemText}>Restore</Text>
+          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Restore</Text>
           {/* <View style={styles.right_arrow}>
             <Icon name='chevron-right' type='material' size={35} color='grey' />
           </View> */}
         </TouchableOpacity>
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({checkingId:true})}} >
           <Icon name='error-outline' type='material' size={35} color='grey' />
-          <Text style={styles.drawerItemText}>Check ID</Text>
+          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Check ID</Text>
           {/* <View style={styles.right_arrow}>
             <Icon name='chevron-right' type='material' size={35} color='grey' />
           </View> */}
@@ -120,7 +134,11 @@ export default class Drawer extends Component<Props>{
         ShowPageFlag: "Statistics"
       });
     }
-    else ;
+    else{
+      this.setState({
+        ShowPageFlag: "Cycles"
+      })
+    }
     this.closeDrawer();
   }
 
@@ -167,7 +185,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   NavigateItem: {
-    height: 60,
+    height:60,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 20,
@@ -176,9 +194,4 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 5,
   },
-  drawerItemText: {
-    fontSize: 17,
-    marginLeft: 20,
-    fontWeight: '400'
-  }
 });
