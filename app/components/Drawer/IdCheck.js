@@ -23,15 +23,19 @@ export default class CheckIdModal extends Component<Props>{
         this.setState({id:id});
     }
     async setId(){
+        if (this.state.input===''||this.state.input.length<9){
+            ToastAndroid.show('Invalid ID input!',ToastAndroid.SHORT);
+            return;
+        }
         await AsyncStorage.setItem('uniqueId',this.state.input);
-        ToastAndroid.show('Id is set!',ToastAndroid.SHORT);
+        ToastAndroid.show('ID is set!',ToastAndroid.SHORT);
         this.getId();
         this.state.input='';
         this.props.closeModal();
     }
     copyId(){
         Clipboard.setString(this.state.id);
-        ToastAndroid.show('Id clipped!',ToastAndroid.SHORT);
+        ToastAndroid.show('ID clipped!',ToastAndroid.SHORT);
     }
     render(){
         return (<Overlay isVisible={this.props.isVisible}
@@ -45,7 +49,7 @@ export default class CheckIdModal extends Component<Props>{
                 </TouchableOpacity>
                 <View>
                     <Text>Reset your ID as:</Text>
-                    <TextInput style={styles.InputStyle} value={this.state.input} onChangeText={(text)=>{this.setState({input:text})}} placeholder={this.state.id} />
+                    <TextInput style={styles.InputStyle} maxLength={9} value={this.state.input} onChangeText={(text)=>{this.setState({input:text})}} placeholder={this.state.id} />
                 </View>
                 <View style={{width:200,flexDirection:'row',justifyContent:'space-around', marginTop:10}}>
                     <Button title='Cancel' type='outline' onPress={()=>{this.setState({input:''});this.props.closeModal();}} />
