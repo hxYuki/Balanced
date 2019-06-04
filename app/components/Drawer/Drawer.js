@@ -12,7 +12,7 @@ type Props = {
 export default class Drawer extends Component<Props>{
   constructor(props) {
     super(props);
-    this.state = { TotalDeposit: 0, MainPageFlag: true, showingOverlay:'none' };
+    this.state = { TotalDeposit: 0, ShowPageFlag:'MainPage', showingOverlay:'none' };
     this.DrawerIn = this.DrawerIn.bind(this);
   }
 
@@ -20,13 +20,48 @@ export default class Drawer extends Component<Props>{
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start' }}>
         <View style={styles.NavigaterHead}><Text style={{ fontSize: 20, color: 'white', fontWeight: '700' }}>Total Deposit: ￥{this.state.TotalDeposit}</Text></View>
-        <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangeMainPage()}>
-          <Icon name='pie-chart' type='material' size={35} color='grey' />
-          <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>{this.state.MainPageFlag == true ? ("Statistics") : ("MainPage")}</Text>
-          <View style={styles.right_arrow}>
-            <Icon name='chevron-right' type='material' size={35} color='grey' />
-          </View>
-        </TouchableOpacity>
+        {
+          this.state.ShowPageFlag=='MainPage'?
+          (
+            <TouchableOpacity style={[styles.NavigateItem,{backgroundColor:'yellow'}]}>
+              <Icon name='home' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>MainPage</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          ):
+          (
+            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(1)}>
+              <Icon name='home' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>MainPage</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          )
+        }
+        {
+          this.state.ShowPageFlag=='Statistics'?
+          (
+            <TouchableOpacity style={[styles.NavigateItem,{backgroundColor:'yellow'}]}>
+              <Icon name='pie-chart' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Statistics</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          ):
+          (
+            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(2)}>
+              <Icon name='pie-chart' type='material' size={35} color='grey' />
+              <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Statistics</Text>
+              <View style={styles.right_arrow}>
+                <Icon name='chevron-right' type='material' size={35} color='grey' />
+              </View>
+            </TouchableOpacity>
+          )
+        }
         <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'upload'})}}>
           <Icon name='backup' type='material' size={35} color='grey' />
           <Text style={{ fontSize: 20, marginLeft: 20, fontWeight: '700' }}>Cloud Backup</Text>
@@ -53,9 +88,18 @@ export default class Drawer extends Component<Props>{
     this.refs.drawerLayout.closeDrawer()
   }
 
-  _ChangeMainPage = () => {
-    let flag = !this.state.MainPageFlag;
-    this.setState({ MainPageFlag: flag });
+  _ChangePage = (id) => {
+    if(id==1){
+      this.setState({
+        ShowPageFlag: "MainPage"
+      });
+    }
+    else if(id==2){
+      this.setState({
+        ShowPageFlag: "Statistics"
+      });
+    }
+    else ;
     this.closeDrawer();
   }
 
@@ -108,6 +152,6 @@ const styles = StyleSheet.create({
   },
   right_arrow: {
     position: 'absolute',
-    right: 15,
+    right: 5,
   },
 });

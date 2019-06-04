@@ -3,6 +3,7 @@ package com.balanced;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
 import com.sha256lib.Sha256Package;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new RNDeviceInfo(),
           new MainReactPackage(),
+            new SvgPackage(),
             new Sha256Package(),
           new VectorIconsPackage(),
           new SQLitePluginPackage()
