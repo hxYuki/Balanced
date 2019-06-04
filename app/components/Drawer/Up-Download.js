@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import { ProgressBarAndroid, View, Text, BackHandler, Alert, AsyncStorage } from 'react-native';
 import {Overlay} from 'react-native-elements';
 import Sqlite from '../../lib/sqlite';
+import Main from '../MainPage/Main';
 import { UpDownLoadUrl } from '../../config/UrlConfig';
 import { TableBasicAccounting } from '../../config/DatabaseConfig';
 
@@ -9,7 +10,8 @@ import { TableBasicAccounting } from '../../config/DatabaseConfig';
 type Props = {
   showing:string,
   handleBack:()=>{},
-  db:Sqlite
+  db:Sqlite,
+  refreshMain:Main
 };
 type TransStatus='done'|'uploading'|'downloading';
 var db:Sqlite;
@@ -38,8 +40,10 @@ export default class UpDownModal extends Component<Props>{
   async upload(){
     this.setState({statusText:'Preparing...',transfering:'uploading'})
     let id = await AsyncStorage.getItem('uniqueId');
+    if(this.state.transfering==='done') return;  // If user exit this window
     this.setState({statusText:'Exporting data...'})
     let collections = await db.in(TableBasicAccounting.name).select();
+    if(this.state.transfering==='done') return;  // If user exit this window
     this.setState({statusText:'Uploading...'});
     let resText = await fetch(UpDownLoadUrl,{
       method:'POST',
@@ -48,6 +52,7 @@ export default class UpDownModal extends Component<Props>{
       },
       body:`id=${id}&data=${JSON.stringify(collections)}`
     }).then(res=>res.text()).then(res=>res).catch(e=>console.log('net:',e));
+    if(this.state.transfering==='done') return;  // If user exit this window
     if(resText==='uploaded'){
       Alert.alert('Backup','Success!',[{text:'Read',onPress:()=>{this.shutTransfer();this.props.handleBack()}}],{cancelable:false});
     }else{
@@ -59,6 +64,7 @@ export default class UpDownModal extends Component<Props>{
   async download(){
     this.setState({statusText:'Preparing...',transfering:'downloading'})
     let id = await AsyncStorage.getItem('uniqueId');
+    if(this.state.transfering==='done') return;  // If user exit this window
     this.setState({statusText:'Downloading...'});
     let collections = await fetch(UpDownLoadUrl,{
       method:'POST',
@@ -66,14 +72,16 @@ export default class UpDownModal extends Component<Props>{
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body:`id=${id}`
-    }).then(res=>res.json()).then(res=>(console.log(res),res)).catch(e=>console.log('net:',e));
-    if(!collections instanceof Array){
+    }).then(res=>res.json()).then(res=>(res)).catch(e=>console.log('net:',e));
+    if(this.state.transfering==='done') return;  // If user exit this window
+    if(typeof collections==='undefined' || (!collections instanceof Array)){
       Alert.alert('Restore','Failed.',[{text:'Cancel',onPress:()=>{this.shutTransfer();this.props.handleBack()}},{text:'Retry',onPress:()=>{this.download()}}],{cancelable:false});
     }else{
       this.setState({statusText:'Importing data...'});
       await db.dropTable(TableBasicAccounting.name);
       await db.createTable(TableBasicAccounting);
       let c = await db.in(TableBasicAccounting.name).insert(collections);
+      this.props.refreshMain.refresh();
       Alert.alert('Restore',`${c.length} item(s) imported.`,[{text:'Read',onPress:()=>{this.shutTransfer();this.props.handleBack()}}],{cancelable:false});
     }
   }

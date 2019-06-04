@@ -22,7 +22,8 @@ type SetTotalDepositCallback = (totalDeposit:Number)=>{}
 type Props = {
   openDrawerCB: OpenDrawerCallback,
   setTotalDeposit: SetTotalDepositCallback,
-  db: Sqlite
+  db: Sqlite,
+  exportRefresh:(refresh:Main)=>{}
 }
 
 const checkUpdated = async () => {
@@ -196,6 +197,7 @@ export default class Main extends Component<Props>{
     })
   }
   componentDidMount(){
+    this.props.exportRefresh(this)
     this.queryListData();
     this.queryStatData();
   }
