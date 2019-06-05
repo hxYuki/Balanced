@@ -19,12 +19,14 @@ const TableBasicAccounting = {
         'nextTriggerTime': 'INTEGER',
     }
 }
+
+const UsageExpenseFor = ['Entertainment','Catering','Education','Loan','Clothing','Daily Expense','Deposit'];
+const UsageIncomeFor = ['Salary','Giving','Investment'];
 const BaseTableFieldTitle = {
     method:['AliPay','WeChat','Cash','Credit Card','Deposit'],
-    usage:['Entertainment','Catering','Education','Loan','Clothing','Daily Expense','Deposit'],
+    usage:[...UsageExpenseFor,...UsageIncomeFor],
     cycleUnit:['Year','Month','Week','Day']
 }
-
 const TableTags = {
     name: 'TagTable',
     fields:{
