@@ -3,7 +3,7 @@ import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpaci
 import { Header, Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
-import { DatabaseConfig, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
+import { UsageExpenseFor, UsageIncomeFor, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
 import moment from 'moment';
 import ThemeConfig from '../../config/ThemeConfig'
@@ -14,18 +14,21 @@ type Props = {
     data: {},
     refresh: () => {},
     closeModify: () => {},
-    modifying:Boolean,
+    modifying: Boolean,
 };
 let db;
 class Modify extends Component<Props>{
     constructor(props) {
         super(props);
         this.state = {
-            isVisible:this.props.modifying,
+            isVisible: this.props.modifying,
             cyclely: this.props.data.cycleCount != null,
-            Amount: this.props.data.amount.toString(),
+            Budget: (this.props.data.amount > 0 ? 1 : 0),
+            Amount: Math.abs(this.props.data.amount).toString(),
             Method: this.props.data.method,
-            Usage: this.props.data.usage,
+            Usage: (this.props.data.amount > 0 ?
+                this.props.data.usage - UsageExpenseFor.length
+                : this.props.data.usage),
             Note: this.props.data.note,
             cycle: this.props.data.cycleCount,
             cycleUnit: this.props.data.cycleUnit,
@@ -49,7 +52,7 @@ class Modify extends Component<Props>{
                         reverse
                         onPress={() => { this.props.closeModify() }}
                     />
-                    <Text style={{ color: '#fff',flex:1 }}>Modify</Text>
+                    <Text style={{ color: '#fff', flex: 1 }}>Modify</Text>
                     <Icon
                         name='delete-forever'
                         type='material'
@@ -62,6 +65,10 @@ class Modify extends Component<Props>{
                 <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 100, paddingBottom: 50 }}>
                     <KeyboardAwareScrollView>
                         <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+                            <Text style={styles.text}>Budget:</Text>
+                            {this.myPicker('Budget', ['Expense', 'Income'])}
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
                             <Text style={styles.text}>Amount:</Text>
                             <Text style={styles.money}>￥</Text>
                             {this.myTextInput('Amount', 'numeric')}
@@ -72,7 +79,7 @@ class Modify extends Component<Props>{
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={styles.text}>Usage:</Text>
-                            {this.myPicker('Usage', BaseTableFieldTitle.usage)}
+                            {this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={styles.text}>date:</Text>
@@ -99,7 +106,7 @@ class Modify extends Component<Props>{
                                 onDateChange={(date) => { this.setState({ date: date }); }}
                             />
                         </View>
-                        {this.state.cyclely ? this.cyclelyPart() : () => { return; }}
+                        {this.state.cyclely && this.cyclelyPart()}
                         <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
                             <Text style={styles.text}>Note:</Text>
                             {this.myTextInput('Note', 'default')}
@@ -129,7 +136,7 @@ class Modify extends Component<Props>{
                     isVisible={this.props.modifying}
                     overlayBackgroundColor='white'
                     fullScreen={true}
-                    onBackdropPress={()=>{this.props.closeModify()}}
+                    onBackdropPress={() => { this.props.closeModify() }}
                 >
                     {this.inputPart()}
                 </Overlay>
@@ -196,25 +203,17 @@ class Modify extends Component<Props>{
             ToastAndroid.showWithGravity(str, ToastAndroid.LONG, ToastAndroid.CENTER);
             return;
         }
-        // console.log('id=',this.props.data.id);
-        // console.log('amount:', Number(this.state.Amount),
-        //     'method:', this.state.Method,
-        //     'note:', this.state.Note,
-        //     'usage:', this.state.Usage,
-        //     'cycleCount:', (this.state.cyclely ? this.state.cycle : null),
-        //     'cycleUnit:', this.state.cycleUnit,
-        //     'firstTime:', this.state.date,
-        //    'nextTriggerTime:',this.state.date,
-        // );
         await db.in(TableBasicAccounting.name).where(`id==${this.props.data.id}`).update({
-            'amount': this.state.Amount,
+            'amount': (this.state.Budget == 0 ? (-this.state.Amount) : this.state.Amount),
             'method': this.state.Method,
             'note': this.state.Note,
-            'usage': this.state.Usage,
+            'usage': (this.state.Budget == 0 ? this.state.Usage : this.state.Usage + UsageExpenseFor.length),
             'cycleCount': (this.state.cyclely ? this.state.cycle : null),
             'cycleUnit': this.state.cycleUnit,
             'firstTime': this.state.date,
-            'nextTriggerTime': this.state.date,
+            'nextTriggerTime': (this.state.cyclely ?
+                moment(this.state.date).add(this.state.cycle, BaseTableFieldTitle.cycleUnit[this.state.cycleUnit]).format("YYYY-MM-DD")
+                : this.state.date),
         });
         this.props.refresh();
         ToastAndroid.showWithGravity('Modify success!', ToastAndroid.SHORT, ToastAndroid.CENTER);

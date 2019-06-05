@@ -3,7 +3,7 @@ import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpaci
 import { Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
-import { DatabaseConfig, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
+import { UsageExpenseFor, UsageIncomeFor, TableBasicAccounting, BaseTableFieldTitle } from '../../config/DatabaseConfig';
 import Sqlite from '../../lib/sqlite';
 import moment from 'moment';
 import ThemeConfig from '../../config/ThemeConfig'
@@ -20,6 +20,7 @@ class Floatwindow extends Component<Props>{
 		this.state = {
 			isVisible: false,
 			cyclely: false,
+			Budget: 0,
 			Amount: '',
 			Method: 0,
 			Usage: 0,
@@ -40,6 +41,10 @@ class Floatwindow extends Component<Props>{
 		return (
 			<View>
 				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+					<Text style={styles.text}>Budget:</Text>
+					{this.myPicker('Budget', ['Expense', 'Income'])}
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
 					<Text style={styles.text}>Amount:</Text>
 					<Text style={styles.money}>￥</Text>
 					{this.myTextInput('Amount', 'numeric')}
@@ -50,7 +55,7 @@ class Floatwindow extends Component<Props>{
 				</View>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>Usage:</Text>
-					{this.myPicker('Usage', BaseTableFieldTitle.usage)}
+					{this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
 				</View>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 					<Text style={styles.text}>date:</Text>
@@ -165,6 +170,7 @@ class Floatwindow extends Component<Props>{
 	}
 	clearData() {
 		this.setState({
+			Budget: 0,
 			Amount: '',
 			Method: 0,
 			Usage: 0,
@@ -195,16 +201,16 @@ class Floatwindow extends Component<Props>{
 			return;
 		}
 		await db.in(TableBasicAccounting.name).insert({
-			'amount': this.state.Amount,
+			'amount': (this.state.Budget == 0 ? (-this.state.Amount) : this.state.Amount),
 			'method': this.state.Method,
 			'note': this.state.Note,
-			'usage': this.state.Usage,
+			'usage': (this.state.Budget == 0 ?this.state.Usage: this.state.Usage + UsageExpenseFor.length),
 			'cycleCount': (this.state.cyclely ? this.state.cycle : null),
 			'cycleUnit': this.state.cycleUnit,
 			'firstTime': this.state.date,
-			'nextTriggerTime': (this.state.cyclely ? 
+			'nextTriggerTime': (this.state.cyclely ?
 				moment(this.state.date).add(this.state.cycle, BaseTableFieldTitle.cycleUnit[this.state.cycleUnit]).format("YYYY-MM-DD")
-				:this.state.date),
+				: this.state.date),
 		});
 		this.clearData();
 		this.props.refresh();
