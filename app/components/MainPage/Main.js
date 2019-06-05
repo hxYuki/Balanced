@@ -318,7 +318,7 @@ export default class Main extends Component<Props>{
               topDivider 
               bottomDivider
               leftIcon={<Image source={icons[BaseTableFieldTitle.method[item.method]]} style={{borderRadius:20,width:40,height:40,tintColor:ThemeConfig.themeStrongColor,backgroundColor:ThemeConfig.themeTextColor}} />} 
-              title={BaseTableFieldTitle.usage[item.usage]} 
+              title={BaseTableFieldTitle.usage[item.usage>99?1:0][item.usage>99?item.usage-100:item.usage]} 
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
               rightSubtitle={moment(item.firstTime).format("YYYY-MM-D")}

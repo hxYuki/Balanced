@@ -204,7 +204,7 @@ class Floatwindow extends Component<Props>{
 			'amount': (this.state.Budget == 0 ? (-this.state.Amount) : this.state.Amount),
 			'method': this.state.Method,
 			'note': this.state.Note,
-			'usage': (this.state.Budget == 0 ?this.state.Usage: this.state.Usage + UsageExpenseFor.length),
+			'usage': (this.state.Budget == 0 ?this.state.Usage: this.state.Usage + 100),
 			'cycleCount': (this.state.cyclely ? this.state.cycle : null),
 			'cycleUnit': this.state.cycleUnit,
 			'firstTime': this.state.date,

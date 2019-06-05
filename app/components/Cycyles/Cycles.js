@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
+import {View, Text, Image, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {List} from 'immutable';
@@ -8,6 +8,8 @@ import ThemeConfig from '../../config/ThemeConfig';
 import Sqlite from '../../lib/sqlite';
 import {TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseConfig';
 import Modify from '../Modify/Modify';
+
+import icons from '../../assets/icon/icons';
 
 const height = Dimensions.get('window').height;
 
@@ -106,8 +108,8 @@ export default class Cycles extends Component<Props>{
               containerStyle={MainStyle.ListItemStyle} 
               topDivider 
               bottomDivider
-              leftIcon={{ name: 'flight-takeoff', color: ThemeConfig.themeStrongColor, reverse: true }} 
-              title={BaseTableFieldTitle.usage[item.usage]} 
+              leftIcon={<Image source={icons[BaseTableFieldTitle.method[item.method]]} style={{borderRadius:20,width:40,height:40,tintColor:ThemeConfig.themeStrongColor,backgroundColor:ThemeConfig.themeTextColor}} />} 
+              title={BaseTableFieldTitle.usage[item.usage>99?1:0][item.usage>99?item.usage-100:item.usage]} 
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
               rightSubtitle={moment(item.firstTime).format("YYYY-MM-D")}

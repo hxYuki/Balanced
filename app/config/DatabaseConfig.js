@@ -24,7 +24,7 @@ const UsageExpenseFor = ['Entertainment','Catering','Education','Loan','Clothing
 const UsageIncomeFor = ['Salary','Giving','Investment'];
 const BaseTableFieldTitle = {
     method:['AliPay','WeChat','Cash','Credit Card','Deposit'],
-    usage:[...UsageExpenseFor,...UsageIncomeFor],
+    usage:[UsageExpenseFor,UsageIncomeFor],
     cycleUnit:['Year','Month','Week','Day']
 }
 const TableTags = {
