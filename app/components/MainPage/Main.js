@@ -1,15 +1,17 @@
 import React, {Component} from 'react';
-import {View, Text, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
+import {View, Text, Image, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {List} from 'immutable';
-
+ 
 import {ListHeader} from './Components';
 import ThemeConfig from '../../config/ThemeConfig';
 import Sqlite from '../../lib/sqlite';
 import {TableBasicAccounting, BaseTableFieldTitle} from '../../config/DatabaseConfig';
 import Floatwindow from '../FloatWindow/FloatWindow';
 import Modify from '../Modify/Modify';
+
+import icons from '../../assets/icon/icons';
 
 
 const height = Dimensions.get('window').height;
@@ -315,7 +317,7 @@ export default class Main extends Component<Props>{
               containerStyle={MainStyle.ListItemStyle} 
               topDivider 
               bottomDivider
-              leftIcon={{ name: 'flight-takeoff', color: ThemeConfig.themeStrongColor, reverse: true }} 
+              leftIcon={<Image source={icons[BaseTableFieldTitle.method[item.method]]} style={{borderRadius:20,width:40,height:40,tintColor:ThemeConfig.themeStrongColor,backgroundColor:ThemeConfig.themeTextColor}} />} 
               title={BaseTableFieldTitle.usage[item.usage]} 
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
