@@ -18,7 +18,7 @@ export default class Drawer extends Component<Props>{
     super(props);
     this.state = { 
       TotalDeposit: 0,
-      ShowPageFlag: 'MainPage',
+      ShowPageFlag: 'Statistics',
       showingOverlay: 'none',
       checkingId:false,
       refresh:null
@@ -160,7 +160,7 @@ export default class Drawer extends Component<Props>{
         <CheckIdModal isVisible={this.state.checkingId} closeModal={()=>{this.setState({checkingId:false})}} />
         <UpDownModal showing={this.state.showingOverlay} handleBack={()=>{this.closeModal()}} db={this.props.db} refreshMain={this.state.refresh} />
         <Main style={this.state.ShowPageFlag!=='MainPage'?{display:'none'}:{}} db={this.props.db} setTotalDeposit={(totalDeposit) => { this.setState({ TotalDeposit: totalDeposit }) }} openDrawerCB={()=>{this.openDrawer()}} exportRefresh={(ptr)=>{this.setState({refresh:ptr})}} />
-        <Statistics style={this.state.ShowPageFlag!=='Statistics'?{display:'none'}:{}} db={this.props.db} />
+        <Statistics style={this.state.ShowPageFlag!=='Statistics'?{display:'none'}:{}} db={this.props.db} openDrawerCB={()=>{this.openDrawer()}} />
         <Cycles style={this.state.ShowPageFlag!=='Cycles'?{display:'none'}:{}} db={this.props.db} openDrawerCB={()=>{this.openDrawer()}} />
       </DrawerLayoutAndroid>
     );

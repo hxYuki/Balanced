@@ -92,11 +92,9 @@ export default class Cycles extends Component<Props>{
         <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
           backgroundColor={ThemeConfig.themeMainColor}
-          containerStyle={{borderBottomWidth:0}}
           placement="left"
           leftComponent={{ icon: "menu", color: "#fff" , onPress:()=>{this.props.openDrawerCB()}}}
           centerComponent={{ text: "Balanced", style: { color: "#fff" } }}
-          // statusBarProps={{ translucent: true, barStyle: "light-content" }}
         />
         <SectionList
           sections={this.state.accounts.toJS()}
