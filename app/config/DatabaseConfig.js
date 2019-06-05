@@ -48,6 +48,8 @@ export {
     DatabaseConfig,
     DBVersion,
     TableBasicAccounting,
+    UsageExpenseFor,
+    UsageIncomeFor,
     BaseTableFieldTitle,
     TableTags,
     AppSettings
