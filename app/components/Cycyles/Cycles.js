@@ -17,7 +17,8 @@ const countListData = (list: List) => (list.reduce((acc,v)=>(acc+v.data.length),
 type OpenDrawerCallback = ()=>{}
 type Props = {
   openDrawerCB: OpenDrawerCallback,
-  db: Sqlite
+  db: Sqlite,
+  style?: StyleSheet
 }
 var db:Sqlite;
 export default class Cycles extends Component<Props>{
@@ -29,9 +30,8 @@ export default class Cycles extends Component<Props>{
       modified:{}
     };
     db=this.props.db;
-    checkThings().then(()=>{
-      this.refreshAfterSubmitted();
-    })
+    // this.refreshAfterSubmitted();
+
   }
   componentDidMount(){
     this.queryListData();
@@ -86,7 +86,7 @@ export default class Cycles extends Component<Props>{
   }
   render(){
     return (
-      <View style={{height:height}}>
+      <View style={[{height:height},this.props.style?this.props.style:{}]}>
         <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
           backgroundColor={ThemeConfig.themeMainColor}

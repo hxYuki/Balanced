@@ -23,7 +23,8 @@ type Props = {
   openDrawerCB: OpenDrawerCallback,
   setTotalDeposit: SetTotalDepositCallback,
   db: Sqlite,
-  exportRefresh:(refresh:Main)=>{}
+  exportRefresh:(refresh:Main)=>{},
+  style?:StyleSheet
 }
 
 const checkUpdated = async () => {
@@ -293,7 +294,7 @@ export default class Main extends Component<Props>{
   }
   render(){
     return (
-      <View style={{height:height}}>
+      <View style={[{height:height},this.props.style?this.props.style:{}]}>
         <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
         <Header
           backgroundColor={ThemeConfig.themeMainColor}
