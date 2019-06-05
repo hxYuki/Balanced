@@ -8,7 +8,7 @@ import Sqlite from '../../lib/sqlite';
 import moment from 'moment';
 import ThemeConfig from '../../config/ThemeConfig'
 
-// let db = new Sqlite(DatabaseConfig);
+// Define the data type of props
 type Props = {
 	db: Sqlite,
 	refresh: () => {},
@@ -37,6 +37,7 @@ class Floatwindow extends Component<Props>{
 	setModalVisible(visible, cyclely) {
 		this.setState({ isVisible: visible, cyclely: cyclely });
 	}
+	//Display the parts that need input
 	inputPart() {
 		return (
 			<View>
@@ -82,6 +83,7 @@ class Floatwindow extends Component<Props>{
 						onDateChange={(date) => { this.setState({ date: date }); }}
 					/>
 				</View>
+				{/* if users wants to insert a cycle item,render this part*/}
 				{this.state.cyclely && this.cyclelyPart()}
 				<View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
 					<Text style={styles.text}>Note:</Text>
@@ -134,6 +136,7 @@ class Floatwindow extends Component<Props>{
 			</View>
 		);
 	}
+	// Use functions to generate a textinput that can modify state
 	myTextInput = (item, boardType) => {
 		return (
 			<TextInput
@@ -143,6 +146,7 @@ class Floatwindow extends Component<Props>{
 			>{this.state[item]}</TextInput>
 		);
 	}
+	//Use functions to generate a TouchableOpacity that can execution function
 	myButtonModal = (text, func) => {
 		return (
 			<View style={styles.viewModal}>
@@ -155,7 +159,8 @@ class Floatwindow extends Component<Props>{
 			</View>
 		)
 	}
-	myPicker = (item, data) => {//To creat a picker,item is a state, data is a array
+	//To creat a picker,item is a state, data is a array
+	myPicker = (item, data) => {
 		let pickerItem = data.map((label, index) => {
 			return (<Picker.Item label={label} value={index} key={toString(index)} />)
 		});
@@ -168,6 +173,7 @@ class Floatwindow extends Component<Props>{
 			</Picker>
 		)
 	}
+	//Initialize state 
 	clearData() {
 		this.setState({
 			Budget: 0,
@@ -180,6 +186,7 @@ class Floatwindow extends Component<Props>{
 			date: (moment().format("YYYY-MM-DD")),
 		});
 	}
+	//Insert data into database, clear state,then refresh the main page.
 	async submitData(next) {
 		let str = '';
 		if (this.state.Amount == '')
