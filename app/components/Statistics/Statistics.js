@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Picker, StatusBar, Text, TouchableOpacity, Dimensions} from 'react-native';
+import { View, ScrollView, StyleSheet, Picker, StatusBar, Text, TouchableOpacity, Dimensions} from 'react-native';
 import {Header} from 'react-native-elements';
-import {LineChart,PieChart} from 'react-native-chart-kit';
+import {LineChart,PieChart, BarChart} from 'react-native-chart-kit';
 import {TableBasicAccounting,BaseTableFieldTitle} from "../../config/DatabaseConfig";
 import ThemeConfig from '../../config/ThemeConfig';
 import moment from 'moment';
@@ -17,9 +17,9 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const chartConfig = {
-  backgroundGradientFrom: '#1E2923',
-  backgroundGradientTo: '#08130D',
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+  backgroundGradientFrom: '#d6e6de',
+  backgroundGradientTo: '#bdcac3',
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   strokeWidth: 2 // optional, default 3
 }
 
@@ -47,13 +47,25 @@ export default class Statistics extends Component<Props>{
             timeTo:moment().endOf('month').format('YYYY-MM-DD'),
             // MethodData:[],
             // UsageData:[],
-            displayedData:[],
+            displayedPieData:[],
+            displayedLineData:{
+                label:[],
+                datasets:[]
+            },
+            lineOK:false
         };
         db=this.props.db;
     }
-    componentWillUpdate(next){
-        // if(this.state)
+    componentWillMount(){
         this.getPieData();
+        this.getLineData();
+    }
+    componentDidUpdate(prevProp,prevState){
+        if(this.state.displaying!==prevState.displaying||this.state.choosenType!==prevState.choosenType||this.state.timeFrom!==prevState.timeFrom||this.state.timeTo!==prevState.timeTo){
+            this.getPieData();
+            this.getLineData();
+        }
+        
         // this.setData();
     }
     async setData(){
@@ -104,14 +116,41 @@ export default class Statistics extends Component<Props>{
             .select();
         
         data = data.map((v,i)=>{return {name:BaseTableFieldTitle.usage[v.usage>99?1:0][v.usage>99?v.usage-100:v.usage],Amount:Math.abs(v['Tamount']),color:colorbox[i],legendFontColor:'#7f7f7f',legendFontSize:15}});
-        // console.log('data:',data);
         
-        this.setState({displayedData:data});
+        this.setState({displayedPieData:data});
+    }
+    async getLineData(){
+        let collection = {
+            label:[],
+            datasets:[]
+        }
+        let q = await db.in(TableBasicAccounting.name)
+            .field('sum(amount) as Tamount,firstTime')
+            .groupBy('firstTime')
+            .where(`firstTime>='${this.state.timeFrom}' AND firstTime<='${this.state.timeTo}' AND amount ${this.state.choosenType==='Expense'?'<':'>'} 0`)
+            .select();
+        collection.label=q.map(v=>v['firstTime']);
+
+        for(let i=0;i<BaseTableFieldTitle.usage[this.state.types.indexOf(this.state.choosenType)].length;i++){
+            let data = await db.in(TableBasicAccounting.name)
+                .field('sum(amount) as Tamount,usage,firstTime,amount')
+                .groupBy('firstTime')
+                .where(`usage=='${i+(this.state.choosenType==='Expense'?0:100)}' AND firstTime>='${this.state.timeFrom}' AND firstTime<='${this.state.timeTo}' AND amount ${this.state.choosenType==='Expense'?'<':'>'} 0`)
+                .select();
+            console.log('???',i,data);
+            
+            let count=0;
+            if(!data) continue;
+            collection.datasets.push({color:()=>colorbox[i],data:collection.label.map((va,index,arr)=>va===data[index-count].firstTime?Math.abs(data[index-count].Tamount):(count++,0))});
+        }
+        console.log(collection);
+        
+        this.setState({displayedLineData:collection,lineOK:true});
     }
     render(){
         return (
-            <View style={[{height:windowHeight},this.props.style?this.props.style:{}]}>
-                <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} />
+            <ScrollView style={[{height:windowHeight},this.props.style?this.props.style:{}]}>
+                {/* <StatusBar translucent barStyle={'light-content'} backgroundColor={'rgba(0, 0, 0, 0.3)'} /> */}
                 <Header
                     backgroundColor={ThemeConfig.themeMainColor}
                     placement="left"
@@ -125,17 +164,17 @@ export default class Statistics extends Component<Props>{
                         <Picker.Item key={v} label={v} value={v} />
                     ))}
                     </Picker>
-                    <Text>By</Text>
+                    {/* <Text>By</Text>
                     <Picker style={{ height: 25, width: 110 }} selectedValue={this.state.displaying} onValueChange={(v)=>{this.setState({displaying:v})}} >
                     {this.state.displayForms.map(v=>(
                         <Picker.Item key={v} label={v} value={v} />
                     ))}
-                    </Picker>
+                    </Picker> */}
                     {/* <Text>From</Text> */}
                 </View>
                 <View >
                     <PieChart
-                        data={this.state.displayedData}
+                        data={this.state.displayedPieData}
                         width={windowWidth}
                         height={250}
                         chartConfig={chartConfig}
@@ -144,20 +183,16 @@ export default class Statistics extends Component<Props>{
                         paddingLeft="8"
                         absolute
                     />
+                    {this.state.lineOK&&<BarChart
+                        data={this.state.displayedLineData}
+                        width={windowWidth}
+                        height={250}
+                        chartConfig={chartConfig}
+                    />}
                 </View>
                 
-                {/* <View><Text style={{alignContent:'center'}}>Usage Table</Text></View>
-                <PieChart
-                data={this.state.MethodData}
-                width={screenWidth}
-                height={250}
-                chartConfig={chartConfig}
-                accessor="amount"
-                backgroundColor="transparent"
-                paddingLeft="8"
-                absolute
-                /> */}
-            </View>
+                
+            </ScrollView>
         );
     }
 }
