@@ -5,7 +5,8 @@ import {TableBasicAccounting,BaseTableFieldTitle} from "../../config/DatabaseCon
 import moment from 'moment';
 
 type Props = {
-    db: Sqlite
+    db: Sqlite,
+    style?: StyleSheet
 }
 
 const screenWidth = Dimensions.get('window').width;
@@ -80,7 +81,7 @@ export default class Statistics extends Component<Props>{
     }
     render(){
         return (
-            <View>
+            <View style={[{},this.props.style?this.props.style:{}]}>
                 <View style={{alignItems:'center'}}><Text style={{fontSize:30}}>Method Table</Text></View>
                 <PieChart
                 data={this.state.MethodData}
