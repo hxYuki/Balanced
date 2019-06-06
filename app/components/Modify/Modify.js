@@ -42,7 +42,7 @@ class Modify extends Component<Props>{
     }
     inputPart() {
         return (
-            <View>
+            <View style={{ height: Dimensions.get('window').height }}>
                 <View style={styles.header}>
                     <Icon
                         name='keyboard-arrow-left'
@@ -62,8 +62,9 @@ class Modify extends Component<Props>{
                         onPress={() => this.deleteData()}
                     />
                 </View>
-                <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 100, paddingBottom: 50 }}>
-                    <KeyboardAwareScrollView>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: "100%" }}>
+                    <View style={{ flex: 1 }}></View>
+                    <KeyboardAwareScrollView style={{ height: 'auto' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
                             <Text style={styles.text}>Budget:</Text>
                             {this.myPicker('Budget', ['Expense', 'Income'])}
@@ -78,11 +79,11 @@ class Modify extends Component<Props>{
                             {this.myPicker('Method', BaseTableFieldTitle.method)}
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.text}>Usage:</Text>
+                            <Text style={styles.text}>For:</Text>
                             {this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.text}>date:</Text>
+                            <Text style={styles.text}>Date:</Text>
                             <DatePicker
                                 style={{ width: 200, marginTop: 15 }}
                                 date={this.state.date}
@@ -115,6 +116,7 @@ class Modify extends Component<Props>{
                             {this.myButtonModal('Confirm', () => this.updateData())}
                         </View>
                     </KeyboardAwareScrollView>
+                    <View style={{ flex: 1 }}></View>
                 </View>
             </View>
         );
@@ -122,7 +124,7 @@ class Modify extends Component<Props>{
     cyclelyPart() {
         return (
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={styles.text}>cycle:</Text>
+                <Text style={styles.text}>Cycle:</Text>
                 {this.myTextInput('cycle', 'numeric')}
                 {this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
             </View>
