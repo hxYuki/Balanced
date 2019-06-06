@@ -29,7 +29,7 @@ const assignId = async () => {
     let resText;
     do{
       id = (await genId(did)).slice(0,9);
-      did = DeviceID+'21';
+      did = DeviceID+'21fc';
       resText = await fetch(UpDownLoadUrl+`?testId=${id}`,{method:'GET'}).then(res=>res.text())
         .then(res=>res).catch(e=>{console.log('net:',e);});
     }while(resText === 'duplicated'&&(toastShort('Duplicated id encountered, regenerating...'),true));

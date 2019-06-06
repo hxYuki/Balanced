@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, DrawerLayoutAndroid, StyleSheet, Text, TouchableOpacity, BackHandler } from 'react-native';
+import { View, DrawerLayoutAndroid, StyleSheet, Text, TouchableOpacity, TouchableNativeFeedback, BackHandler } from 'react-native';
 import { Icon } from 'react-native-elements'
 
 import Main from '../MainPage/Main';
@@ -33,87 +33,90 @@ export default class Drawer extends Component<Props>{
         {
           this.state.ShowPageFlag=='MainPage'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:ThemeConfig.themeMainColor}]}>
-              <Icon name='home' type='material' size={35} color='#fff' />
-              <Text style={[styles.DrawerItemText,{color:'#fff',fontWeight:'500'}]}>MainPage</Text>
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>
+              <Icon name='home' type='material' size={35} color={ThemeConfig.themeMainColor} />
+              <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>MainPage</Text>
               {/* <View style={styles.right_arrow}>
                 <Icon name='chevron-right' type='material' size={35} color='grey' />
               </View> */}
             </View>
           ):
           (
-            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(1)}>
-              <Icon name='home' type='material' size={35} color='grey' />
-              <Text style={styles.DrawerItemText}>MainPage</Text>
-              <View style={styles.right_arrow}>
-                <Icon name='chevron-right' type='material' size={35} color='grey' />
+            <TouchableNativeFeedback style={styles.NavigateItem} onPress={() => this._ChangePage(1)}>
+              <View style={styles.NavigateItem}>
+                <Icon name='home' type='material' size={35} color='grey' />
+                <Text style={styles.DrawerItemText}>MainPage</Text>
+                <View style={styles.right_arrow}>
+                  <Icon name='chevron-right' type='material' size={35} color='grey' />
+                </View>
               </View>
-            </TouchableOpacity>
+            </TouchableNativeFeedback>
           )
         }
         {
           this.state.ShowPageFlag=='Statistics'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:ThemeConfig.themeMainColor}]}>
-              <Icon name='pie-chart' type='material' size={35} color='#fff' />
-              <Text style={[styles.DrawerItemText,{color:'#fff',fontWeight:'500'}]}>Statistics</Text>
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>
+              <Icon name='pie-chart' type='material' size={35} color={ThemeConfig.themeMainColor} />
+              <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>Statistics</Text>
               {/* <View style={styles.right_arrow}>
                 <Icon name='chevron-right' type='material' size={35} color='grey' />
               </View> */}
             </View>
           ):
           (
-            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(2)}>
-              <Icon name='pie-chart' type='material' size={35} color='grey' />
-              <Text style={styles.DrawerItemText}>Statistics</Text>
-              <View style={styles.right_arrow}>
-                <Icon name='chevron-right' type='material' size={35} color='grey' />
+            <TouchableNativeFeedback style={styles.NavigateItem} onPress={() => this._ChangePage(2)}>
+              <View style={styles.NavigateItem}>
+                <Icon name='pie-chart' type='material' size={35} color='grey' />
+                <Text style={styles.DrawerItemText}>Statistics</Text>
+                <View style={styles.right_arrow}>
+                  <Icon name='chevron-right' type='material' size={35} color='grey' />
+                </View>
               </View>
-            </TouchableOpacity>
+            </TouchableNativeFeedback>
           )
         }
         {
           this.state.ShowPageFlag=='Cycles'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:ThemeConfig.themeMainColor}]}>{/* TODO: Link Cycles page */}
-              <Icon name='autorenew' type='material' size={35} color='#fff' />
-              <Text style={[styles.DrawerItemText,{color:'#fff',fontWeight:'500'}]}>Cycles</Text>
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>{/* TODO: Link Cycles page */}
+              <Icon name='autorenew' type='material' size={35} color={ThemeConfig.themeMainColor} />
+              <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>Cycles</Text>
               {/* <View style={styles.right_arrow}>
                 <Icon name='chevron-right' type='material' size={35} color='grey' />
               </View> */}
             </View>
           ):
           (
-            <TouchableOpacity style={styles.NavigateItem} onPress={() => this._ChangePage(3)}>{/* TODO: Link Cycles page */}
-              <Icon name='autorenew' type='material' size={35} color='grey' />
-              <Text style={styles.DrawerItemText}>Cycles</Text>
-              <View style={styles.right_arrow}>
-                <Icon name='chevron-right' type='material' size={35} color='grey' />
+            <TouchableNativeFeedback style={styles.NavigateItem} onPress={() => this._ChangePage(3)}>{/* TODO: Link Cycles page */}
+              <View style={styles.NavigateItem}>
+                <Icon name='autorenew' type='material' size={35} color='grey' />
+                <Text style={styles.DrawerItemText}>Cycles</Text>
+                <View style={styles.right_arrow}>
+                  <Icon name='chevron-right' type='material' size={35} color='grey' />
+                </View>
               </View>
-            </TouchableOpacity>
+            </TouchableNativeFeedback>
           )
         }
-        <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'upload'})}}>
-          <Icon name='backup' type='material' size={35} color='grey' />
-          <Text style={styles.DrawerItemText}>Cloud Backup</Text>
-          {/* <View style={styles.right_arrow}>
-            <Icon name='chevron-right' type='material' size={35} color='grey' />
-          </View> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'download'})}}>
-          <Icon name='cloud-download' type='material' size={35} color='grey' />
-          <Text style={styles.DrawerItemText}>Restore</Text>
-          {/* <View style={styles.right_arrow}>
-            <Icon name='chevron-right' type='material' size={35} color='grey' />
-          </View> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.NavigateItem} onPress={()=>{this.setState({checkingId:true})}} >
-          <Icon name='error-outline' type='material' size={35} color='grey' />
-          <Text style={styles.DrawerItemText}>Check ID</Text>
-          {/* <View style={styles.right_arrow}>
-            <Icon name='chevron-right' type='material' size={35} color='grey' />
-          </View> */}
-        </TouchableOpacity>
+        <TouchableNativeFeedback style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'upload'})}}>
+          <View style={styles.NavigateItem}>
+            <Icon name='backup' type='material' size={35} color='grey' />
+            <Text style={styles.DrawerItemText}>Cloud Backup</Text>
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback style={styles.NavigateItem} onPress={()=>{this.setState({showingOverlay:'download'})}}>
+          <View style={styles.NavigateItem}>
+            <Icon name='cloud-download' type='material' size={35} color='grey' />
+            <Text style={styles.DrawerItemText}>Restore</Text>
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback style={styles.NavigateItem} onPress={()=>{this.setState({checkingId:true})}} >
+          <View style={styles.NavigateItem}>
+            <Icon name='error-outline' type='material' size={35} color='grey' />
+            <Text style={styles.DrawerItemText}>Check ID</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
     )
   };
@@ -197,11 +200,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   right_arrow: {
-    position: 'absolute',
-    right: 5,
+    // position: 'absolute',
+    // right: 5,
   },
   DrawerItemText:{
     fontSize: 20, 
     marginLeft: 20, 
+    flex:1,
     fontWeight: '400' }
 });
