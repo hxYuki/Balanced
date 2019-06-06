@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpacity, StatusBar } from 'react-native';
+import { ToastAndroid, Text, View, Picker, TextInput, Dimensions, TouchableOpacity, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Header, Overlay, Icon } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import styles from './styles';
@@ -26,9 +26,7 @@ class Modify extends Component<Props>{
             Budget: (this.props.data.amount > 0 ? 1 : 0),
             Amount: Math.abs(this.props.data.amount).toString(),
             Method: this.props.data.method,
-            Usage: (this.props.data.amount > 0 ?
-                this.props.data.usage - UsageExpenseFor.length
-                : this.props.data.usage),
+            Usage: this.props.data.usage > 99 ? this.props.data.usage - 100 : this.props.data.usage,
             Note: this.props.data.note,
             cycle: this.props.data.cycleCount,
             cycleUnit: this.props.data.cycleUnit,
@@ -42,7 +40,7 @@ class Modify extends Component<Props>{
     }
     inputPart() {
         return (
-            <View style={{ height: Dimensions.get('window').height }}>
+            <View>
                 <View style={styles.header}>
                     <Icon
                         name='keyboard-arrow-left'
@@ -62,61 +60,61 @@ class Modify extends Component<Props>{
                         onPress={() => this.deleteData()}
                     />
                 </View>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: "100%" }}>
-                    <View style={{ flex: 1 }}></View>
-                    <KeyboardAwareScrollView style={{ height: 'auto' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
-                            <Text style={styles.text}>Budget:</Text>
-                            {this.myPicker('Budget', ['Expense', 'Income'])}
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
-                            <Text style={styles.text}>Amount:</Text>
-                            <Text style={styles.money}>￥</Text>
-                            {this.myTextInput('Amount', 'numeric')}
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.text}>Method:</Text>
-                            {this.myPicker('Method', BaseTableFieldTitle.method)}
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.text}>For:</Text>
-                            {this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.text}>Date:</Text>
-                            <DatePicker
-                                style={{ width: 200, marginTop: 15 }}
-                                date={this.state.date}
-                                mode="date"
-                                placeholder={this.state.date}
-                                format="YYYY-MM-DD"
-                                minDate={(moment(this.state.date).add(-2, 'Years').format("YYYY")) + "-01-01"}
-                                maxDate={(moment(this.state.date).add(2, 'Years').format("YYYY")) + "-12-31"}
-                                androidMode="spinner"
-                                customStyles={{
-                                    dateIcon: {
-                                        position: 'absolute',
-                                        left: 0,
-                                        top: 4,
-                                        marginLeft: 0
-                                    },
-                                    dateInput: {
-                                        marginLeft: 36
-                                    }
-                                }}
-                                onDateChange={(date) => { this.setState({ date: date }); }}
-                            />
-                        </View>
-                        {this.state.cyclely && this.cyclelyPart()}
-                        <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
-                            <Text style={styles.text}>Note:</Text>
-                            {this.myTextInput('Note', 'default')}
-                        </View>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', height: 70, }}>
-                            {this.myButtonModal('Confirm', () => this.updateData())}
-                        </View>
-                    </KeyboardAwareScrollView>
-                    <View style={{ flex: 1 }}></View>
+                <View style={{ alignItems: 'center', justifyContent: 'center', height: "100%" }}>
+                    <KeyboardAvoidingView style={{ paddingBottom: 100 }}>
+                        <ScrollView style={{ width: '100%' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'stretch', paddingTop:this.state.cyclely? 50:100, }}>
+                                <Text style={styles.text}>Budget:</Text>
+                                {this.myPicker('Budget', ['Expense', 'Income'])}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+                                <Text style={styles.text}>Amount:</Text>
+                                <Text style={styles.money}>￥</Text>
+                                {this.myTextInput('Amount', 'numeric')}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.text}>Method:</Text>
+                                {this.myPicker('Method', BaseTableFieldTitle.method)}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.text}>For:</Text>
+                                {this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={styles.text}>Date:</Text>
+                                <DatePicker
+                                    style={{ width: 200, marginTop: 15 }}
+                                    date={this.state.date}
+                                    mode="date"
+                                    placeholder={this.state.date}
+                                    format="YYYY-MM-DD"
+                                    minDate={(moment(this.state.date).add(-2, 'Years').format("YYYY")) + "-01-01"}
+                                    maxDate={(moment(this.state.date).add(2, 'Years').format("YYYY")) + "-12-31"}
+                                    androidMode="spinner"
+                                    customStyles={{
+                                        dateIcon: {
+                                            position: 'absolute',
+                                            left: 0,
+                                            top: 4,
+                                            marginLeft: 0
+                                        },
+                                        dateInput: {
+                                            marginLeft: 36
+                                        }
+                                    }}
+                                    onDateChange={(date) => { this.setState({ date: date }); }}
+                                />
+                            </View>
+                            {this.state.cyclely && this.cyclelyPart()}
+                            <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
+                                <Text style={styles.text}>Note:</Text>
+                                {this.myTextInput('Note', 'default')}
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: 70, }}>
+                                {this.myButtonModal('Confirm', () => this.updateData())}
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </View>
         );
