@@ -1,4 +1,4 @@
-const UpDownLoadUrl = 'http://192.168.199.197/balanced/';
+const UpDownLoadUrl = 'http://10.12.35.154/balanced/';
 
 
 export {UpDownLoadUrl};

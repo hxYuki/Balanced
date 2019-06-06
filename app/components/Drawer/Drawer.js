@@ -18,7 +18,7 @@ export default class Drawer extends Component<Props>{
     super(props);
     this.state = { 
       TotalDeposit: 0,
-      ShowPageFlag: 'Statistics',
+      ShowPageFlag: 'MainPage',
       showingOverlay: 'none',
       checkingId:false,
       refresh:null
@@ -33,7 +33,7 @@ export default class Drawer extends Component<Props>{
         {
           this.state.ShowPageFlag=='MainPage'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(238,238,238)'}]}>
               <Icon name='home' type='material' size={35} color={ThemeConfig.themeMainColor} />
               <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>MainPage</Text>
               {/* <View style={styles.right_arrow}>
@@ -56,7 +56,7 @@ export default class Drawer extends Component<Props>{
         {
           this.state.ShowPageFlag=='Statistics'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(238,238,238)'}]}>
               <Icon name='pie-chart' type='material' size={35} color={ThemeConfig.themeMainColor} />
               <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>Statistics</Text>
               {/* <View style={styles.right_arrow}>
@@ -79,7 +79,7 @@ export default class Drawer extends Component<Props>{
         {
           this.state.ShowPageFlag=='Cycles'?
           (
-            <View style={[styles.NavigateItem,{backgroundColor:'rgb(236,236,236)'}]}>{/* TODO: Link Cycles page */}
+            <View style={[styles.NavigateItem,{backgroundColor:'rgb(238,238,238)'}]}>{/* TODO: Link Cycles page */}
               <Icon name='autorenew' type='material' size={35} color={ThemeConfig.themeMainColor} />
               <Text style={[styles.DrawerItemText,{color:ThemeConfig.themeMainColor,fontWeight:'500'}]}>Cycles</Text>
               {/* <View style={styles.right_arrow}>
