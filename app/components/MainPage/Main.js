@@ -201,8 +201,8 @@ export default class Main extends Component<Props>{
   }
   componentDidMount(){
     this.props.exportRefresh(this)
-    this.queryListData();
-    this.queryStatData();
+    // this.queryListData();
+    // this.queryStatData();
   }
   processSections(initialData:Array) {
     if (initialData.length === 0) return;
