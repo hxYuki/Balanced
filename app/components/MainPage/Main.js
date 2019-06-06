@@ -52,7 +52,7 @@ const updateCycles = async () => {
     
     let cycles = await db.in(TableBasicAccounting.name).field('*').where('cycleCount is not null AND nextTriggerTime<=date("now")').select();
     // console.log('toUpdate',cycles);
-    
+    if(!cycles) return;
     cycles.forEach(v=>{
       let d = {...v,nextTriggerTime:null,firstTime:v.nextTriggerTime,cycleCount:null};
       delete d.id;
@@ -60,7 +60,7 @@ const updateCycles = async () => {
       db.in(TableBasicAccounting.name).insert(d);
       db.in(TableBasicAccounting.name).where(`id==${v.id}`).update({'nextTriggerTime':moment(v.nextTriggerTime).add(v.cycleCount,BaseTableFieldTitle.cycleUnit[v.cycleUnit]).format('YYYY-MM-DD')});
       // console.log('next',moment(v.nextTriggerTime).add('W',v.cycleCount).format('YYYY-MM-DD'));
-      
+      return updateCycles();
     })
     // let cyclesNeedUpdate = cycles.filter()
   }catch(e){
@@ -212,9 +212,10 @@ export default class Main extends Component<Props>{
     };
     t.title = parseYearMonth(initialData[0]['firstTime']);
     t.data = initialData.filter(v => t.title === parseYearMonth(v['firstTime']));
+    // If data's section already exists
     let hasIndex = -1;
     if (-1 !== (hasIndex = this.state.accounts.findIndex(v => v.title === t.title))) {
-      let newT = this.state.accounts.get(hasIndex);
+      let newT = this.state.accounts.get(hasIndex); // Get old object
       t.data = newT.data.concat(t.data);
       this.setState({
         accounts: this.state.accounts.set(hasIndex,t)
@@ -250,12 +251,12 @@ export default class Main extends Component<Props>{
     let income = await db.in(TableBasicAccounting.name)
       .field("usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
       .groupBy('month')
-      .where('amount>0 and month=strftime("%m","now") and usage!=6')
+      .where('amount>0 and month=strftime("%m","now") and usage!=6 and method!=4')
       .select();
     let expense = await db.in(TableBasicAccounting.name)
       .field("usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
       .groupBy('month')
-      .where('amount<0 and month=strftime("%m","now") and usage!=6')
+      .where('amount<0 and month=strftime("%m","now") and usage!=6 and method!=4')
       .select();
     let deposit = await db.in(TableBasicAccounting.name)
       .field("method, usage, firstTime, sum(amount) as total, strftime('%m',firstTime) as month")
