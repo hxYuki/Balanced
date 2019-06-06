@@ -42,10 +42,13 @@ const styles = StyleSheet.create({
     },
     viewModal: {
         flex: 1,
+        justifyContent: 'space-around',
     },
     myButtonModal: {
         marginTop: 15,
-        width: "85%",
+        width: "80%",
+        marginLeft:'10%',
+        borderRadius:3,
     },
     buttonClear:{
         backgroundColor:ThemeConfig.themeWeakColor,

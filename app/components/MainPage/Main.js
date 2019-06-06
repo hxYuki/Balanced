@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Image, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage} from 'react-native';
+import {View, Text, Image, SectionList, StatusBar, StyleSheet, ToastAndroid, Dimensions, AsyncStorage,TouchableOpacity} from 'react-native';
 import {Header, ListItem} from 'react-native-elements';
 import moment from 'moment';
 import {List} from 'immutable';
@@ -314,7 +314,8 @@ export default class Main extends Component<Props>{
           renderSectionHeader={({section:{title}})=><Text style={MainStyle.SectionHeaderStyle}>{moment(title).format('MMMM')}</Text>}
           ListHeaderComponent={<ListHeader income={this.state.income} expense={this.state.expense} deposit={this.state.deposit} />}
           renderItem={({ item }) => 
-            (<ListItem
+            (<TouchableOpacity onLongPress={() => { this.setState({ modified: item, modifying: true }) }}>
+              <ListItem
               containerStyle={MainStyle.ListItemStyle} 
               topDivider 
               bottomDivider
@@ -323,8 +324,9 @@ export default class Main extends Component<Props>{
               subtitle={item.note?item.note:'(none)'} 
               rightTitle={(item.amount).formatCurrency({symbol:'￥'})} 
               rightSubtitle={moment(item.firstTime).format("YYYY-MM-D")}
-              onLongPress={()=>{this.setState({modified:item,modifying:true})}}
-            />)}
+            />
+            </TouchableOpacity>
+            )}
           keyExtractor={(item,index)=>index.toString()}
           // onEndReachedThreshold={}
           onEndReached={()=>{this.queryListData()}}

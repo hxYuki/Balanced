@@ -55,11 +55,11 @@ class Floatwindow extends Component<Props>{
 					{this.myPicker('Method', BaseTableFieldTitle.method)}
 				</View>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-					<Text style={styles.text}>Usage:</Text>
+					<Text style={styles.text}>For:</Text>
 					{this.myPicker('Usage', this.state.Budget == 0 ? UsageExpenseFor : UsageIncomeFor)}
 				</View>
 				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-					<Text style={styles.text}>date:</Text>
+					<Text style={styles.text}>Date:</Text>
 					<DatePicker
 						style={{ width: 200, marginTop: 15 }}
 						date={this.state.date}
@@ -100,7 +100,7 @@ class Floatwindow extends Component<Props>{
 	cyclelyPart() {
 		return (
 			<View style={{ flexDirection: 'row', alignItems: 'center', }}>
-				<Text style={styles.text}>cycle:</Text>
+				<Text style={styles.text}>Cycle:</Text>
 				{this.myTextInput('cycle', 'numeric')}
 				{this.myPicker('cycleUnit', BaseTableFieldTitle.cycleUnit)}
 			</View>

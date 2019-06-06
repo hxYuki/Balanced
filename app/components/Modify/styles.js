@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
+        flex:0,
         alignItems: 'center',
         backgroundColor: ThemeConfig.themeMainColor,
     },
