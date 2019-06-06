@@ -31,9 +31,6 @@ class Floatwindow extends Component<Props>{
 		};
 		db = this.props.db;
 	}
-	async componentWillMount() {
-		await db.createTable(TableBasicAccounting);
-	}
 	setModalVisible(visible, cyclely) {
 		this.setState({ isVisible: visible, cyclely: cyclely });
 	}

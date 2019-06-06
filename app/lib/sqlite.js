@@ -7,7 +7,7 @@
 import sqlite from 'react-native-sqlite-storage'
 
 sqlite.enablePromise(true);
-sqlite.DEBUG(true); // NOTE: Delete this before release
+sqlite.DEBUG(false); // NOTE: Delete this before release
 
 type ActionName = String
 type ErrorMessage = Object
